@@ -8,7 +8,7 @@ from docx import Document
 from docx.shared import Inches, Pt
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 
-# --- CONFIGURACIÓN DE PÁGINA ---
+# --- 1. CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(page_title="MMPI-2 Pro Suite Completa", layout="wide", page_icon="🧬")
 
 st.markdown("""
@@ -17,7 +17,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- INICIALIZACIÓN DE VARIABLES GLOBALES ---
+# --- 2. INICIALIZACIÓN DE MEMORIA A PRUEBA DE FALLOS ---
 TOTAL_ITEMS = 567
 
 if 'data' not in st.session_state:
@@ -25,11 +25,19 @@ if 'data' not in st.session_state:
         "Nº": range(1, TOTAL_ITEMS + 1),
         "Respuesta": [""] * TOTAL_ITEMS
     })
+
+# ¡EL PARCHE DEFINITIVO PARA EL KEYERROR ESTÁ AQUÍ!
 if 'paciente' not in st.session_state:
     st.session_state.paciente = {"nombre": "", "edad": 25, "sexo": "Masculino", "id": ""}
+else:
+    # Si la memoria de la nube recuerda sesiones viejas, rellenamos lo que falta
+    if "nombre" not in st.session_state.paciente: st.session_state.paciente["nombre"] = ""
+    if "edad" not in st.session_state.paciente: st.session_state.paciente["edad"] = 25
+    if "sexo" not in st.session_state.paciente: st.session_state.paciente["sexo"] = "Masculino"
+    if "id" not in st.session_state.paciente: st.session_state.paciente["id"] = ""
 
 # =====================================================================
-# 🧠 MOTOR DE CORRECCIÓN CLÍNICA (CLAVES COMPLETAS)
+# 🧠 3. MOTOR DE CORRECCIÓN CLÍNICA (CLAVES COMPLETAS)
 # =====================================================================
 def procesar_mmpi2(df_respuestas):
     resp = dict(zip(df_respuestas["Nº"], df_respuestas["Respuesta"]))
@@ -38,7 +46,7 @@ def procesar_mmpi2(df_respuestas):
     total_v = sum(1 for r in resp.values() if r == "V")
     total_f = sum(1 for r in resp.values() if r == "F")
 
-    # CLAVES OFICIALES COMPLETAS (Validez y Clínicas Básicas)
+    # CLAVES OFICIALES COMPLETAS
     escalas_map = {
         "L (Mentira)": {
             "V": [], 
@@ -110,21 +118,20 @@ def procesar_mmpi2(df_respuestas):
         if e in df_res.index:
             df_res.at[e, "PD_K"] = round(df_res.at[e, "PD"] + (f * k_raw))
 
-    # Conversión a T y Diagnóstico (Usando estimación clínica estándar T=50+10z)
+    # Conversión a T y Diagnóstico (Estimación clínica estándar T=50+10z)
     def diagnosticar(t):
         if t >= 75: return "Elevación Muy Alta: Probable patología grave o crisis aguda."
         if t >= 65: return "Elevación Clínica: Síntomas o rasgos de personalidad significativos."
         if t >= 45: return "Rango Normal: Funcionamiento típico."
         return "Bajo: Negación de síntomas o minimización de problemas."
 
-    # *NOTA TÉCNICA:* En producción real, estos valores deben cruzarse con un Excel de baremos por país.
     df_res["T"] = df_res["PD_K"].apply(lambda x: min(round((x * 1.8) + 38), 120)) 
     df_res["Interpretación"] = df_res["T"].apply(diagnosticar)
     
     return df_res.reset_index(), omitidas, total_v, total_f
 
 # =====================================================================
-# 📊 GENERADOR DE GRÁFICA PARA WORD
+# 📊 4. GENERADOR DE GRÁFICA PARA WORD
 # =====================================================================
 def grafico_word(df):
     plt.figure(figsize=(10, 5))
@@ -144,16 +151,20 @@ def grafico_word(df):
     return buf
 
 # =====================================================================
-# 🖥️ VISTAS Y NAVEGACIÓN
+# 🖥️ 5. VISTAS Y NAVEGACIÓN (SIDEBAR)
 # =====================================================================
 with st.sidebar:
     st.image("https://cdn-icons-png.flaticon.com/512/2906/2906274.png", width=80)
     st.title("MMPI-2 Pro Suite")
     vista = st.radio("Módulos:", ["1. Captura de Datos (Tabulación)", "2. Dashboard Clínico", "3. Generador de Informes"])
     st.divider()
+    
+    # Manejo seguro de los inputs con session_state
     st.session_state.paciente["nombre"] = st.text_input("Nombre del Paciente", st.session_state.paciente["nombre"])
     st.session_state.paciente["id"] = st.text_input("Nº Expediente", st.session_state.paciente["id"])
-    st.session_state.paciente["sexo"] = st.selectbox("Sexo", ["Masculino", "Femenino"])
+    
+    idx_sexo = 0 if st.session_state.paciente["sexo"] == "Masculino" else 1
+    st.session_state.paciente["sexo"] = st.selectbox("Sexo", ["Masculino", "Femenino"], index=idx_sexo)
 
 # --- MÓDULO 1: TABULACIÓN MASIVA ---
 if vista == "1. Captura de Datos (Tabulación)":
@@ -241,5 +252,8 @@ elif vista == "3. Generador de Informes":
         doc.save(final_buf)
         final_buf.seek(0)
         
+        # Nombre de archivo dinámico
+        nombre_archivo = st.session_state.paciente['nombre'].replace(" ", "_") if st.session_state.paciente['nombre'] else "Paciente"
+        
         st.success("✅ Documento generado. Haz clic abajo para guardar.")
-        st.download_button("📥 GUARDAR WORD (.docx)", final_buf, f"MMPI2_{st.session_state.paciente['nombre']}.docx")
+        st.download_button("📥 GUARDAR WORD (.docx)", final_buf, f"MMPI2_{nombre_archivo}.docx")
