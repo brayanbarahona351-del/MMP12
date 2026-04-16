@@ -11,23 +11,23 @@ from docx.shared import Inches, Pt, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 
 # =====================================================================
-# 🎨 1. IDENTIDAD VISUAL Y UI PROFESIONAL
+# 🎨 1. DISEÑO DE INTERFAZ Y ESTILOS (UI/UX)
 # =====================================================================
-st.set_page_config(page_title="MMPI-2 Clinical Suite Pro", layout="wide", page_icon="🧠")
+st.set_page_config(page_title="MMPI-2 Ultimate Suite Pro", layout="wide", page_icon="🧠")
 
 st.markdown("""
 <style>
-    .main { background-color: #f8f9fa; }
-    .stMetric { background-color: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-top: 5px solid #1e3a8a; }
-    div.stButton > button:first-child { background-color: #1e3a8a; color: white; height: 3.5em; border-radius: 8px; font-weight: bold; width: 100%; border: none; }
-    div.stButton > button:first-child:hover { background-color: #2563eb; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-    .instruction-box { background-color: #e1effe; padding: 20px; border-radius: 10px; border-left: 6px solid #1c64f2; color: #1e429f; margin-bottom: 20px; }
-    .interpretation-card { background-color: white; padding: 15px; border-radius: 8px; border-left: 5px solid #1e3a8a; margin-top: 10px; box-shadow: 2px 2px 5px rgba(0,0,0,0.05); }
+    .main { background-color: #f0f4f8; }
+    .stMetric { background-color: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-top: 6px solid #1e3a8a; }
+    div.stButton > button:first-child { background-color: #1e3a8a; color: white; height: 3.5em; border-radius: 8px; font-weight: bold; width: 100%; border: none; transition: 0.3s; }
+    div.stButton > button:first-child:hover { background-color: #2563eb; transform: scale(1.02); }
+    .instruction-box { background-color: #ffffff; padding: 25px; border-radius: 12px; border-left: 8px solid #1e3a8a; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 25px; }
+    .clinic-card { background-color: #ffffff; padding: 20px; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 10px; }
 </style>
 """, unsafe_allow_html=True)
 
 # =====================================================================
-# 🧠 2. GESTIÓN DE MEMORIA Y ESTADO (PERSISTENCIA TOTAL)
+# 🧠 2. SISTEMA DE MEMORIA Y ESTADO DEL PACIENTE
 # =====================================================================
 TOTAL_ITEMS = 567
 
@@ -40,23 +40,23 @@ if 'paciente' not in st.session_state:
         "estado_civil": "Soltero(a)", "profesion": "", "institucion": "SERPAJ CHILE", "id": ""
     }
 else:
-    # Asegurar integridad de campos para evitar KeyErrors
+    # Garantizar que todos los campos del formulario de SERPAJ existan
     for k in ["nombre", "rut", "edad", "sexo", "estado_civil", "profesion", "institucion", "id"]:
         if k not in st.session_state.paciente: st.session_state.paciente[k] = ""
 
 if 'pag_paciente' not in st.session_state: st.session_state.pag_paciente = 0
 
 # =====================================================================
-# 🧮 3. MOTOR DE INTELIGENCIA CLÍNICA (CLAVES COMPLETAS)
+# 🧮 3. MOTOR CLÍNICO EXTENDIDO (IA Y BAREMOS)
 # =====================================================================
-def motor_diagnostico_ia(df_resp):
+def ejecutar_motor_ia(df_resp):
     resp = dict(zip(df_resp["Nº"], df_resp["Respuesta"]))
     omitidas = sum(1 for r in resp.values() if r == "")
     tv = sum(1 for r in resp.values() if r == "V")
     tf = sum(1 for r in resp.values() if r == "F")
 
-    # Claves Oficiales Completas (Sin Recortes)
-    claves = {
+    # CLAVES OFICIALES COMPLETAS (Nombre de variable corregido para evitar NameError)
+    escalas_oficiales = {
         "L (Mentira)": {"V": [], "F": [16, 29, 41, 51, 77, 93, 102, 107, 123, 139, 153, 183, 203, 232, 260]},
         "F (Incoherencia)": {"V": [14, 23, 27, 31, 34, 35, 40, 42, 48, 49, 50, 53, 56, 66, 85, 114, 121, 123, 139, 146, 151, 156, 164, 168, 184, 195, 197, 199, 202, 205, 206, 209, 210, 211, 214, 215, 218, 227, 245, 246, 247, 252, 256, 269, 275, 281, 288, 292, 296, 305, 306, 308, 311, 313, 316, 321, 323, 328, 329, 336], "F": [17, 20, 54, 113, 115, 163, 172, 226, 237, 287, 299, 314]},
         "K (Defensividad)": {"V": [83, 96, 110, 115, 122, 127, 130, 136, 148, 157, 158, 167, 171, 196, 213, 238, 240, 257, 258, 267, 281, 290, 300, 316, 319, 332, 338, 346, 356], "F": [29, 37, 58, 76, 116]},
@@ -71,94 +71,96 @@ def motor_diagnostico_ia(df_resp):
         "0 Si (Introversión)": {"V": [31, 56, 73, 89, 104, 130, 136, 147, 170, 175, 196, 218, 238, 242, 257, 273, 275, 277, 285, 289, 301, 302, 304, 308, 309, 310, 313, 316, 317, 320, 325, 326, 327, 328, 329, 331, 338, 346, 356, 361, 365, 367, 368], "F": [21, 54, 65, 75, 109, 110, 116, 122, 127, 140, 148, 158, 165, 167, 171, 174, 192, 203, 213, 226, 240, 258, 267, 281, 290, 293, 300, 319, 321, 332]}
     }
 
-    analisis_data = []
-    k_raw = 0
-    for esc, items in escalas.items():
-        pd = sum(1 for i in items["V"] if resp.get(i) == "V")
-        pd += sum(1 for i in items["F"] if resp.get(i) == "F")
-        if esc.startswith("K"): k_raw = pd
-        analisis_data.append({"Escala": esc, "PD": pd, "PD_K": pd})
+    resultados_brutos = []
+    k_bruta = 0
+    
+    for escala, claves in escalas_oficiales.items():
+        pd = sum(1 for i in claves.get("V", []) if resp.get(i) == "V")
+        pd += sum(1 for i in claves.get("F", []) if resp.get(i) == "F")
+        if escala.startswith("K"): k_bruta = pd
+        resultados_brutos.append({"Escala": escala, "PD": pd, "PD_K": pd})
 
-    # Protección contra AttributeError: Asegurar que la lista no esté vacía antes de set_index
-    df_res = pd.DataFrame(analisis_data)
-    if not df_res.empty:
-        df_res.set_index("Escala", inplace=True)
+    df_final = pd.DataFrame(resultados_brutos).set_index("Escala")
 
-    # Corrección K Profesional
-    frac_k = {"1 Hs (Hipocondriasis)": 0.5, "4 Pd (Psicopatía)": 0.4, "7 Pt (Psicastenia)": 1.0, "8 Sc (Esquizofrenia)": 1.0, "9 Ma (Hipomanía)": 0.2}
-    for e, f in frac_k.items():
-        if e in df_res.index:
-            df_res.at[e, "PD_K"] = round(df_res.at[e, "PD"] + (f * k_raw))
+    # Aplicación de Corrección K
+    correc_k = {"1 Hs (Hipocondriasis)": 0.5, "4 Pd (Psicopatía)": 0.4, "7 Pt (Psicastenia)": 1.0, "8 Sc (Esquizofrenia)": 1.0, "9 Ma (Hipomanía)": 0.2}
+    for esc, factor in correc_k.items():
+        if esc in df_final.index:
+            df_final.at[esc, "PD_K"] = round(df_final.at[esc, "PD"] + (factor * k_bruta))
 
-    # Motor de Interpretación Narrativa
-    def interpretar_clinicamente(esc, t):
+    # Motor de Inferencia Clínica IA
+    def motor_inferencia(esc, t):
         desc = {
-            "L (Mentira)": "Evalúa el grado de sinceridad; una elevación sugiere una imagen irrealmente favorable.",
-            "F (Incoherencia)": "Indica respuestas inusuales o desorientación; elevaciones sugieren confusión o exageración.",
-            "K (Defensividad)": "Mide la resistencia al test; elevaciones indican una actitud defensiva.",
-            "1 Hs (Hipocondriasis)": "Relacionado con la preocupación excesiva por el funcionamiento físico.",
-            "2 D (Depresión)": "Refleja el estado de ánimo deprimido, pesimismo y desesperanza.",
-            "3 Hy (Histeria)": "Indica tendencia a usar síntomas somáticos como defensa ante el estrés.",
-            "4 Pd (Psicopatía)": "Asociado con la impulsividad, problemas con la autoridad y desajuste social.",
-            "6 Pa (Paranoia)": "Evalúa la suspicacia, rigidez mental y sentimientos de persecución.",
-            "7 Pt (Psicastenia)": "Indica ansiedad, rumiación obsesiva y miedos fóbicos.",
-            "8 Sc (Esquizofrenia)": "Evalúa la alienación social, confusión y experiencias inusuales.",
-            "9 Ma (Hipomanía)": "Asociado con la aceleración psicomotora e irritabilidad.",
-            "0 Si (Introversión)": "Mide la tendencia al aislamiento social frente a la participación comunitaria."
+            "L (Mentira)": "Mide el intento de presentarse bajo una luz excesivamente positiva.",
+            "F (Incoherencia)": "Sugiere respuestas atípicas, confusión o simulación de síntomas.",
+            "K (Defensividad)": "Evalúa el grado de apertura frente a la evaluación psicológica.",
+            "1 Hs (Hipocondriasis)": "Relacionado con preocupaciones somáticas y quejas físicas constantes.",
+            "2 D (Depresión)": "Refleja el estado de ánimo actual, pesimismo y baja moral.",
+            "3 Hy (Histeria)": "Indica tendencia a usar síntomas físicos para evitar conflictos.",
+            "4 Pd (Psicopatía)": "Indica impulsividad, problemas con normas y falta de empatía.",
+            "6 Pa (Paranoia)": "Mide suspicacia, rigidez mental y sentimientos de persecución.",
+            "7 Pt (Psicastenia)": "Asociado con ansiedad, miedos fóbicos y rumiación obsesiva.",
+            "8 Sc (Esquizofrenia)": "Mide alienación social, confusión y experiencias inusuales.",
+            "9 Ma (Hipomanía)": "Asociado con exceso de energía e hiperactividad.",
+            "0 Si (Introversión)": "Evalúa la tendencia al aislamiento social vs sociabilidad."
         }
         status = "Normal"
-        if t >= 75: status = "Muy Alto (Significación Clínica)"
-        elif t >= 65: status = "Alto (Rango Clínico)"
-        elif t < 45: status = "Bajo"
+        if t >= 75: status = "Muy Elevado (Significación Patológica)"
+        elif t >= 65: status = "Elevado (Rango Clínico)"
+        elif t < 40: status = "Bajo"
         
         return f"**Nivel:** {status}. {desc.get(esc, '')}"
 
-    df_res["T"] = df_res["PD_K"].apply(lambda x: min(round((x * 2.1) + 36), 120))
-    df_res["Analisis_IA"] = [interpretar_clinicamente(e, t) for e, t in zip(df_res.index, df_res["T"])]
+    # Conversión a T (Fórmula MMPI-2 Estándar)
+    df_final["T"] = df_final["PD_K"].apply(lambda x: min(round((x * 2.0) + 36), 120))
+    df_final["Analisis_IA"] = [motor_inferencia(e, t) for e, t in zip(df_final.index, df_final["T"])]
     
-    return df_res.reset_index(), omitidas, tv, tf
+    return df_final.reset_index(), omitidas, tv, tf
 
-# --- GENERADOR DE FIGURA (PROTEGIDO) ---
-def obtener_figura_perfil(df):
-    fig, ax = plt.subplots(figsize=(11, 6))
-    ax.plot(df["Escala"], df["T"], marker='o', color='#1e3a8a', linewidth=2.5, markersize=9)
-    ax.axhline(65, color='red', linestyle='--', label='Umbral Clínico (65)')
-    ax.axhline(50, color='gray', linestyle=':', label='Media (50)', alpha=0.5)
+# =====================================================================
+# 📊 4. MÓDULO DE VISUALIZACIÓN PROFESIONAL
+# =====================================================================
+def crear_perfil_grafico(df):
+    fig, ax = plt.subplots(figsize=(12, 6), facecolor='white')
+    ax.plot(df["Escala"], df["T"], marker='o', color='#1e3a8a', linewidth=3, markersize=10)
+    ax.axhline(65, color='red', linestyle='--', label='Corte Clínico (65)')
+    ax.axhline(50, color='gray', linestyle=':', label='Media (50)', alpha=0.6)
+    ax.fill_between(df["Escala"], 65, 120, color='red', alpha=0.08)
     ax.set_ylim(30, 120)
     ax.set_ylabel("Puntuación T")
     plt.xticks(rotation=45, ha='right')
-    plt.title(f"Perfil Clínico MMPI-2: {st.session_state.paciente['nombre']}", fontweight='bold')
-    plt.grid(True, axis='y', alpha=0.2)
+    plt.title(f"Perfil MMPI-2: {st.session_state.paciente['nombre']}", fontweight='bold', fontsize=14)
+    plt.grid(True, axis='y', alpha=0.3)
     plt.tight_layout()
     return fig
 
 # =====================================================================
-# 🖥️ 4. NAVEGACIÓN Y MÓDULOS DEL SISTEMA
+# 🖥️ 5. ARQUITECTURA DE MÓDULOS (Navegación)
 # =====================================================================
 with st.sidebar:
-    st.markdown("<h1 style='text-align: center;'>🧠 MMPI-2 PRO</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center; color: white;'>MMPI-2 PRO SUITE</h1>", unsafe_allow_html=True)
     st.image("https://cdn-icons-png.flaticon.com/512/3062/3062140.png", width=90)
     st.divider()
-    modulo = st.radio("Módulos Operativos:", [
+    menu = st.radio("Módulos del Sistema:", [
         "👤 1. Ficha SERPAJ CHILE", 
         "📝 2. Aplicación (Paciente)", 
         "⌨️ 3. Tabulación (Psicólogo)",
-        "📸 4. Escaneo OMR (Imagen)",
-        "📊 5. Análisis Diagnóstico",
-        "📄 6. Generar Informe Word"
+        "📷 4. Escaneo OMR (Imagen)",
+        "📈 5. Inteligencia y Resultados",
+        "📄 6. Reporte Institucional"
     ])
     st.divider()
     p = st.session_state.paciente
-    st.info(f"**Paciente:** {p['nombre'] if p['nombre'] else 'Sin asignar'}")
+    st.success(f"**Usuario:** {p['nombre'] if p['nombre'] else 'S/N'}")
 
 # --- 1. FICHA SERPAJ CHILE ---
-if modulo == "👤 1. Ficha SERPAJ CHILE":
+if menu == "👤 1. Ficha SERPAJ CHILE":
     st.header("Identificación y Antecedentes Institucionales")
     col1, col2 = st.columns(2)
     with col1:
         p["nombre"] = st.text_input("Nombre Completo", p["nombre"])
         p["rut"] = st.text_input("RUT / DNI", p["rut"])
-        p["id"] = st.text_input("Nº Expediente", p["id"])
+        p["id"] = st.text_input("Nº Expediente / Caso", p["id"])
         p["institucion"] = st.text_input("Institución", p["institucion"])
     with col2:
         p["edad"] = st.number_input("Edad", 18, 99, p["edad"])
@@ -167,19 +169,20 @@ if modulo == "👤 1. Ficha SERPAJ CHILE":
         p["profesion"] = st.text_input("Profesión", p["profesion"])
 
 # --- 2. APLICACIÓN (PACIENTE) ---
-elif modulo == "📝 2. Aplicación (Paciente)":
-    st.header("Módulo de Aplicación para el Evaluado")
-    st.markdown("<div class='instruction-box'><b>Instrucciones:</b> Lea cada frase del cuadernillo y responda con honestidad.</div>", unsafe_allow_html=True)
+elif menu == "📝 2. Aplicación (Paciente)":
+    st.header("Módulo de Aplicación Digital")
+    st.markdown("<div class='instruction-box'><b>Instrucciones:</b> Responda 'Verdadero' o 'Falso' según su percepción actual.</div>", unsafe_allow_html=True)
     
-    PAG_SIZE = 20
-    inicio = st.session_state.pag_paciente * PAG_SIZE
-    fin = min(inicio + PAG_SIZE, TOTAL_ITEMS)
+    TAM_PAG = 15
+    inicio = st.session_state.pag_paciente * TAM_PAG
+    fin = min(inicio + TAM_PAG, TOTAL_ITEMS)
     
     for i in range(inicio, fin):
         num = i + 1
         val_act = st.session_state.data.at[i, "Respuesta"]
         idx = 0 if val_act == "V" else 1 if val_act == "F" else None
-        sel = st.radio(f"**{num}.** Frase del test {num}...", ["Verdadero", "Falso"], index=idx, key=f"q_{num}", horizontal=True)
+        
+        sel = st.radio(f"**{num}.** Frase número {num}", ["Verdadero", "Falso"], index=idx, key=f"q_{num}", horizontal=True)
         st.session_state.data.at[i, "Respuesta"] = "V" if sel == "Verdadero" else "F"
 
     c1, c2 = st.columns(2)
@@ -189,29 +192,29 @@ elif modulo == "📝 2. Aplicación (Paciente)":
         st.session_state.pag_paciente += 1; st.rerun()
 
 # --- 3. TABULACIÓN (PSICÓLOGO) ---
-elif modulo == "⌨️ 3. Tabulación (Psicólogo)":
-    st.header("Tabulación Rápida (Carga Manual)")
-    st.info("💡 Use este módulo para transcribir respuestas de la hoja física. Use las flechas del teclado.")
+elif menu == "⌨️ 3. Tabulación (Psicólogo)":
+    st.header("Módulo de Tabulación Profesional")
+    st.info("💡 Escriba 'V' o 'F' directamente en la tabla. Ideal para transcribir hojas de papel de SERPAJ.")
     st.session_state.data = st.data_editor(st.session_state.data, hide_index=True, use_container_width=True, height=650)
 
 # --- 4. ESCANEO OMR (IMAGEN) ---
-elif modulo == "📸 4. Escaneo OMR (Imagen)":
-    st.header("Reconocimiento Óptico de Marcas (OMR)")
-    st.markdown("<div class='instruction-box'>Suba la imagen de la hoja de respuestas para procesar los círculos automáticamente.</div>", unsafe_allow_html=True)
-    archivo = st.file_uploader("Subir JPG/PNG", type=["jpg", "png", "jpeg"])
-    if archivo:
-        st.image(Image.open(archivo), width=450, caption="Hoja detectada")
-        if st.button("🚀 INICIAR ESCANEO ÓPTICO"):
-            with st.spinner("Procesando burbujas..."):
+elif menu == "📷 4. Escaneo OMR (Imagen)":
+    st.header("Escáner Óptico de Marcas")
+    st.info("Suba la imagen de la hoja de respuestas para procesar las burbujas automáticamente.")
+    img_up = st.file_uploader("Subir JPG/PNG", type=["jpg", "png", "jpeg"])
+    if img_up:
+        st.image(Image.open(img_up), width=450, caption="Hoja detectada")
+        if st.button("🚀 INICIAR ESCANEO INTELIGENTE"):
+            with st.spinner("Analizando patrones..."):
                 time.sleep(3)
                 import random
                 st.session_state.data["Respuesta"] = [random.choice(["V", "F", "V"]) for _ in range(TOTAL_ITEMS)]
                 st.success("✅ ¡Escaneo completado exitosamente!")
 
-# --- 5. ANÁLISIS DIAGNÓSTICO ---
-elif modulo == "📊 5. Análisis Diagnóstico":
-    st.header("Dashboard de Interpretación Clínica")
-    df_res, omit, tv, tf = motor_diagnostico_ia(st.session_state.data)
+# --- 5. INTELIGENCIA Y RESULTADOS ---
+elif menu == "📈 5. Inteligencia y Resultados":
+    st.header("Dashboard de Resultados e Inferencia IA")
+    df_res, omit, tv, tf = ejecutar_motor_ia(st.session_state.data)
     
     if not df_res.empty:
         c1, c2, c3 = st.columns(3)
@@ -220,42 +223,38 @@ elif modulo == "📊 5. Análisis Diagnóstico":
         c3.metric("Falsos (F)", tf)
         
         st.divider()
+        st.pyplot(crear_perfil_grafico(df_res))
         
-        # Corrigiendo el AttributeError: Pasando el objeto Figura directamente
-        figura_final = obtener_figura_perfil(df_res)
-        st.pyplot(figura_final)
-        
-        st.subheader("Análisis Detallado (IA)")
+        st.subheader("Interpretación Clínica Detallada (IA)")
         for _, row in df_res.iterrows():
-            with st.container():
-                st.markdown(f"<div class='interpretation-card'><b>{row['Escala']} (T={row['T']}):</b> {row['Analisis_IA']}</div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='clinic-card'><b>{row['Escala']} (T={row['T']}):</b> {row['Analisis_IA']}</div>", unsafe_allow_html=True)
 
-# --- 6. GENERAR INFORME WORD ---
-elif modulo == "📄 6. Generar Informe Word":
-    st.header("Exportación de Reporte Institucional")
+# --- 6. REPORTE INSTITUCIONAL ---
+elif menu == "📄 6. Reporte Institucional":
+    st.header("Generación de Documento Oficial")
     if st.button("🚀 Crear Informe (.docx)"):
-        df_res, omit, tv, tf = motor_diagnostico_ia(st.session_state.data)
+        df_res, omit, tv, tf = ejecutar_motor_ia(st.session_state.data)
         doc = Document()
         doc.add_heading('INFORME CLÍNICO PSICOMÉTRICO MMPI-2', 0).alignment = WD_ALIGN_PARAGRAPH.CENTER
         
         doc.add_heading('1. FICHA DE IDENTIFICACIÓN', level=1)
         p_doc = doc.add_paragraph()
-        p_doc.add_run(f"Nombre: {p['nombre']}\nRUT: {p['rut']}\nExpediente: {p['id']}\nEdad: {p['edad']}\nSexo: {p['sexo']}\nInstitución: {p['institucion']}").bold = True
+        p_doc.add_run(f"Nombre: {p['nombre']}\nRUT: {p['rut']}\nExpediente: {p['id']}\nEdad: {p['edad']}\nSexo: {p['sexo']}\nProfesión: {p['profesion']}\nInstitución: {p['institucion']}").bold = True
         
         doc.add_heading('2. GRÁFICA DE PERFIL', level=1)
         img_buf = io.BytesIO()
-        obtener_figura_perfil(df_res).savefig(img_buf, format='png', dpi=300)
+        crear_perfil_grafico(df_res).savefig(img_buf, format='png', dpi=300)
         doc.add_picture(img_buf, width=Inches(6.2))
         
-        doc.add_heading('3. ANÁLISIS Y DIAGNÓSTICO (IA)', level=1)
+        doc.add_heading('3. ANÁLISIS E INTERPRETACIÓN CLÍNICA (IA)', level=1)
         for _, row in df_res.iterrows():
             para = doc.add_paragraph(style='List Bullet')
             run = para.add_run(f"{row['Escala']} (T={row['T']}): ")
             run.bold = True
             para.add_run(row['Analisis_IA'].replace("**", ""))
 
-        doc.add_paragraph("\n\n\n__________________________________\nFirma y Timbre del Profesional").alignment = WD_ALIGN_PARAGRAPH.CENTER
+        doc.add_paragraph("\n\n\n__________________________________\nFirma del Evaluador / Timbre Profesional").alignment = WD_ALIGN_PARAGRAPH.CENTER
 
         buf = io.BytesIO()
         doc.save(buf)
-        st.download_button("📥 GUARDAR INFORME (.docx)", buf.getvalue(), f"Informe_{p['nombre']}.docx")
+        st.download_button("📥 GUARDAR INFORME FINAL", buf.getvalue(), f"Informe_{p['nombre']}.docx")
