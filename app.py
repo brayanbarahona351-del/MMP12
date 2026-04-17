@@ -11,9 +11,9 @@ from docx.shared import Inches, Pt, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 
 # =====================================================================
-# 🎨 1. ESTÉTICA CLÍNICA Y FORENSE (CSS PREMIUM)
+# 🎨 1. ESTÉTICA CLÍNICA Y FORENSE (CSS PREMIUM Y CUADRÍCULA)
 # =====================================================================
-st.set_page_config(page_title="MMPI-2 PRO | Sistema Pericial", layout="wide", page_icon="🛡️")
+st.set_page_config(page_title="MMPI-2 PRO | Peritaje Clínico", layout="wide", page_icon="🛡️")
 
 def aplicar_interfaz_premium():
     st.markdown("""
@@ -56,23 +56,26 @@ def aplicar_interfaz_premium():
         }
         div.stButton > button:hover { background-color: var(--main-blue); }
         
-        .block-title {
-            text-align: center; color: #ffffff; font-size: 16px; font-weight: 600; 
-            background: var(--accent-blue); padding: 12px; border-radius: 6px; margin-bottom: 15px;
-        }
-        
         .scan-alert {
             background-color: #f0fdf4; border: 1px solid #bbf7d0; color: #166534;
             padding: 15px; border-radius: 8px; margin: 20px 0;
             font-size: 15px; font-weight: 600;
         }
+
+        /* Compactar los radio buttons para que parezcan hojas de burbujas */
+        div[role="radiogroup"] { flex-direction: row; gap: 10px; }
+        .stRadio > label { font-weight: 700; color: #0f172a; font-size: 14px; }
+        
+        /* Títulos de pestañas */
+        .stTabs [data-baseweb="tab-list"] { background-color: #ffffff; border-radius: 8px; padding: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .stTabs [data-baseweb="tab"] { font-weight: bold; color: var(--accent-blue); }
     </style>
     """, unsafe_allow_html=True)
 
 aplicar_interfaz_premium()
 
 # =====================================================================
-# 🧠 2. ARQUITECTURA DE DATOS (ENFOQUE EN IDENTIDAD NACIONAL)
+# 🧠 2. ARQUITECTURA DE DATOS
 # =====================================================================
 TOTAL_ITEMS = 567
 
@@ -85,8 +88,8 @@ def inicializar_motor_sesion():
         
     defaults = {
         "nombre": "", "rut": "", "edad": 25, "sexo": "Masculino", 
-        "estado_civil": "Soltero(a)", "profesion": "", "institucion": "Centro de Evaluación Psicológica",
-        "motivo": "Evaluación Psicológica Integral y Perfilamiento de Personalidad", 
+        "estado_civil": "Soltero(a)", "profesion": "", "institucion": "Clínica Forense y Psicológica",
+        "motivo": "Evaluación Psicológica Integral, Perfilamiento de Personalidad y Salud Mental", 
         "fecha": datetime.now().strftime("%d/%m/%Y"),
         "perito": "Profesional Evaluador"
     }
@@ -127,32 +130,29 @@ def obtener_puntuacion_t_real(escala, pd_valor, sexo):
     return int(round(max(30, min(120, base_t))))
 
 # =====================================================================
-# 🧠 4. MOTOR DIAGNÓSTICO IA EXTENSO (MANTIENE TODAS LAS ÁREAS)
+# 🧠 4. MOTOR DIAGNÓSTICO IA (12 ÁREAS, PERSONALIZADO)
 # =====================================================================
 class MotorDiagnosticoIntegral:
     @staticmethod
     def obtener_diccionario_escalas():
         return {
-            "L (Mentira)": {"Area": "Validez", "H": "El sujeto presenta una rigidez defensiva marcada. Intenta proyectar una imagen de perfección ética, negando fallas humanas menores. Existe un esfuerzo consciente por ocultar vulnerabilidades.", "N": "Sinceridad normativa. El individuo es capaz de reconocer imperfecciones comunes sin alterar su autoimagen."},
-            "F (Incoherencia)": {"Area": "Validez", "H": "Elevación crítica que sugiere distress emocional agudo, desorganización cognitiva o una exageración deliberada de síntomas (grito de ayuda o simulación).", "N": "Respuestas coherentes y consistentes. Adecuada comprensión lectora y apego a la realidad."},
-            "K (Defensividad)": {"Area": "Validez", "H": "Alto grado de control emocional y reserva. Resistencia a la exploración psicológica profunda. Fachada de eficiencia que puede encubrir conflictos internalizados.", "N": "Equilibrio saludable entre la apertura clínica y la autoprotección del ego."},
-            "1 Hs": {"Area": "Clínica", "H": "Tendencia significativa a somatizar el estrés. Quejas físicas múltiples y excesiva preocupación por el funcionamiento corporal como mecanismo de escape.", "N": "Percepción normal del estado de salud físico. Ausencia de indicadores de somatización clínica."},
-            "2 D": {"Area": "Clínica", "H": "Cuadro depresivo activo. Desánimo, desesperanza, apatía motora, insatisfacción vital y falta de energía para afrontar las demandas del entorno.", "N": "Estabilidad del estado de ánimo. Motivación y energía vital preservadas."},
-            "3 Hy": {"Area": "Clínica", "H": "Mecanismos de negación severos. Inmadurez emocional, fuerte necesidad de aprobación externa y posible desarrollo de síntomas físicos bajo presión psicológica.", "N": "Manejo emocional proporcionado. Adaptación sana a las tensiones interpersonales."},
-            "4 Pd": {"Area": "Clínica", "H": "Impulsividad, baja tolerancia a la frustración y dificultades marcadas para internalizar normas sociales. Fricción con figuras de autoridad y externalización de la culpa.", "N": "Control de impulsos adecuado. Respeto por las normativas sociales y buena integración comunitaria."},
-            "6 Pa": {"Area": "Clínica", "H": "Rigidez cognitiva, suspicacia extrema e hipersensibilidad al rechazo. Tendencia a percibir el entorno como hostil, sintiéndose tratado injustamente.", "N": "Confianza interpersonal conservada. Flexibilidad cognitiva y ausencia de ideación paranoide."},
-            "7 Pt": {"Area": "Clínica", "H": "Ansiedad paralizante, perfeccionismo disfuncional, autocrítica severa y patrones rumiantes u obsesivos que merman la capacidad de decisión.", "N": "Niveles de preocupación normativos. Seguridad en sí mismo y ausencia de rituales obsesivos."},
-            "8 Sc": {"Area": "Clínica", "H": "Aislamiento social profundo, pensamiento desorganizado y distanciamiento de la realidad objetiva. Sentimientos de incomprensión y alienación.", "N": "Juicio de realidad intacto. Procesos de pensamiento lógicos y secuenciales."},
-            "9 Ma": {"Area": "Clínica", "H": "Aceleración psicomotriz, irritabilidad y sobreestimación de capacidades. Dificultad para mantener la constancia debido a un exceso de energía dispersa.", "N": "Nivel de activación congruente con las demandas del entorno. Estabilidad conductual."},
-            "0 Si": {"Area": "Clínica", "H": "Evitación social marcada. Timidez paralizante y disconfort agudo en situaciones grupales desestructuradas. Preferencia por el aislamiento.", "N": "Participación social adecuada. Capacidad para interactuar en grupos sin experimentar angustia."}
+            "L (Mentira)": {"Area": "Validez", "H": "El sujeto presenta una rigidez defensiva marcada. Intenta proyectar una imagen de perfección ética.", "N": "Sinceridad normativa. Es capaz de reconocer imperfecciones comunes sin alterar su autoimagen."},
+            "F (Incoherencia)": {"Area": "Validez", "H": "Elevación crítica que sugiere distress emocional agudo, desorganización cognitiva o una exageración deliberada de síntomas.", "N": "Respuestas coherentes y consistentes. Adecuada comprensión lectora y apego a la realidad."},
+            "K (Defensividad)": {"Area": "Validez", "H": "Alto grado de control emocional y reserva. Resistencia a la exploración psicológica profunda.", "N": "Equilibrio saludable entre la apertura clínica y la autoprotección del ego."},
+            "1 Hs": {"Area": "Clínica", "H": "Tendencia significativa a somatizar el estrés. Quejas físicas múltiples y excesiva preocupación por el cuerpo.", "N": "Percepción normal del estado de salud físico. Ausencia de indicadores de somatización clínica."},
+            "2 D": {"Area": "Clínica", "H": "Cuadro depresivo activo. Desánimo, desesperanza, apatía motora, insatisfacción vital y falta de energía.", "N": "Estabilidad del estado de ánimo. Motivación y energía vital preservadas."},
+            "3 Hy": {"Area": "Clínica", "H": "Mecanismos de negación severos. Inmadurez emocional, fuerte necesidad de aprobación externa y somatización bajo presión.", "N": "Manejo emocional proporcionado. Adaptación sana a las tensiones interpersonales."},
+            "4 Pd": {"Area": "Clínica", "H": "Impulsividad, baja tolerancia a la frustración y dificultades marcadas para internalizar normas sociales. Conflicto con la autoridad.", "N": "Control de impulsos adecuado. Respeto por las normativas sociales y buena integración."},
+            "6 Pa": {"Area": "Clínica", "H": "Rigidez cognitiva, suspicacia extrema e hipersensibilidad al rechazo. Tendencia a percibir el entorno como hostil.", "N": "Confianza interpersonal conservada. Flexibilidad cognitiva y ausencia de ideación paranoide."},
+            "7 Pt": {"Area": "Clínica", "H": "Ansiedad paralizante, perfeccionismo disfuncional, autocrítica severa y patrones rumiantes u obsesivos.", "N": "Niveles de preocupación normativos. Seguridad en sí mismo y ausencia de rituales obsesivos."},
+            "8 Sc": {"Area": "Clínica", "H": "Aislamiento social profundo, pensamiento desorganizado y distanciamiento de la realidad objetiva.", "N": "Juicio de realidad intacto. Procesos de pensamiento lógicos y secuenciales."},
+            "9 Ma": {"Area": "Clínica", "H": "Aceleración psicomotriz, irritabilidad y sobreestimación de capacidades. Exceso de energía inmanejable.", "N": "Nivel de activación congruente con las demandas del entorno. Estabilidad conductual."},
+            "0 Si": {"Area": "Clínica", "H": "Evitación social marcada. Timidez paralizante y disconfort agudo en situaciones grupales desestructuradas.", "N": "Participación social adecuada. Capacidad para interactuar en grupos sin experimentar angustia."}
         }
 
     @staticmethod
     def generar_diagnostico_narrativo(df_perfil, paciente):
-        nombre_evaluado = paciente.get('nombre', '').strip()
-        dni = paciente.get('rut', '').strip()
-        if not nombre_evaluado:
-            nombre_evaluado = "el/la evaluado(a)"
+        nombre_evaluado = paciente.get('nombre', '').strip() or "el/la evaluado(a)"
             
         t_L = df_perfil[df_perfil['Escala'] == 'L (Mentira)']['T'].values[0]
         t_F = df_perfil[df_perfil['Escala'] == 'F (Incoherencia)']['T'].values[0]
@@ -161,24 +161,24 @@ class MotorDiagnosticoIntegral:
         
         validez_txt = f"<b>1. ANÁLISIS ESTRUCTURAL DE LA VALIDEZ DEL PERFIL DE {nombre_evaluado.upper()}:</b><br>"
         if t_L >= 65 or t_K >= 65:
-            validez_txt += f"El análisis de las escalas de validez revela que {nombre_evaluado} presenta una configuración caracterizada por una elevada defensividad y un esfuerzo activo por manipular la impresión clínica. El paciente ha intentado proyectar una imagen de perfección normativa. Aunque el perfil conserva su utilidad diagnóstica, el profesional debe considerar que los niveles reales de angustia podrían estar subestimados."
+            validez_txt += f"El análisis de las escalas de validez revela que {nombre_evaluado} presenta una configuración caracterizada por una elevada defensividad y un esfuerzo activo por manipular la impresión clínica. Intentó proyectar una imagen de perfección normativa. Aunque el perfil conserva utilidad diagnóstica, los niveles reales de conflicto podrían estar subestimados."
         elif t_F >= 70:
-            validez_txt += f"Se observa una elevación estadísticamente atípica en la escala de Incoherencia (F) para {nombre_evaluado}. Este patrón es indicativo de distress psicológico agudo, desorganización del pensamiento, o una tendencia consciente a exagerar la sintomatología. Se requiere correlación clínica profunda."
+            validez_txt += f"Se observa una elevación atípica en la escala de Incoherencia (F) para {nombre_evaluado}. Este patrón indica distress psicológico agudo, desorganización, o una tendencia consciente a exagerar la sintomatología. Se requiere correlación clínica profunda."
         else:
             validez_txt += f"La evaluación indica que {nombre_evaluado} abordó la prueba con un nivel óptimo de franqueza, cooperación y coherencia lógica. No se detectan indicadores de simulación o defensividad rígida. El protocolo es válido y confiable."
 
         clinico_txt = "<br><br><b>2. EVALUACIÓN DEL ESTADO CLÍNICO Y AJUSTE DE LA PERSONALIDAD:</b><br>"
         if escalas_clinicas_elevadas.empty:
-            clinico_txt += f"El recorrido del perfil clínico indica que {nombre_evaluado} no presenta elevaciones de rango patológico. Este hallazgo sugiere fuertemente un estado de homeostasis emocional y un nivel robusto de adaptación psicosocial. {nombre_evaluado} dispone de mecanismos de afrontamiento funcionales."
+            clinico_txt += f"El recorrido del perfil clínico indica que {nombre_evaluado} no presenta elevaciones de rango patológico. Esto sugiere un estado de homeostasis emocional y un nivel robusto de adaptación psicosocial. {nombre_evaluado} dispone de mecanismos de afrontamiento funcionales."
         else:
             nombres = ", ".join(escalas_clinicas_elevadas['Escala'].tolist())
-            clinico_txt += f"El análisis revela que {nombre_evaluado} presenta picos de significancia clínica en las dimensiones correspondientes a: <b>{nombres}</b>. Esta configuración denota núcleos sintomáticos activos o rasgos desadaptativos que interfieren negativamente con la funcionalidad del paciente y su autorregulación emocional."
+            clinico_txt += f"El análisis revela que {nombre_evaluado} presenta picos de significancia clínica en las dimensiones: <b>{nombres}</b>. Esta configuración denota núcleos sintomáticos activos o rasgos desadaptativos que interfieren negativamente con la funcionalidad del paciente."
 
         recomendacion_txt = "<br><br><b>3. IMPLICACIONES PRONÓSTICAS Y PLAN DE ACCIÓN:</b><br>"
         if '4 Pd' in escalas_clinicas_elevadas['Escala'].values or '6 Pa' in escalas_clinicas_elevadas['Escala'].values or '8 Sc' in escalas_clinicas_elevadas['Escala'].values or '9 Ma' in escalas_clinicas_elevadas['Escala'].values:
-            recomendacion_txt += f"En virtud de la presencia de indicadores severos (externalización, rigidez perceptiva o desorganización), se prescribe para {nombre_evaluado} derivación a psicoterapia estructurada focalizada en contención conductual y reestructuración del juicio crítico."
+            recomendacion_txt += f"Debido a la presencia de indicadores severos, se prescribe para {nombre_evaluado} derivación a psicoterapia focalizada en contención conductual, reestructuración del juicio crítico y control de impulsos."
         elif '1 Hs' in escalas_clinicas_elevadas['Escala'].values or '2 D' in escalas_clinicas_elevadas['Escala'].values or '7 Pt' in escalas_clinicas_elevadas['Escala'].values:
-            recomendacion_txt += f"Dado el predominio de sintomatología internalizante (ansiedad/depresión), se recomienda a {nombre_evaluado} un abordaje terapéutico orientado a flexibilizar la rumiación y fomentar la activación conductual. Pronóstico favorable con adherencia."
+            recomendacion_txt += f"Dado el predominio de sintomatología internalizante, se recomienda a {nombre_evaluado} un abordaje terapéutico orientado a flexibilizar la rumiación y fomentar la activación conductual. Pronóstico favorable."
         else:
             recomendacion_txt += f"El pronóstico de ajuste para {nombre_evaluado} es altamente favorable. Se sugiere promover el mantenimiento de su red de apoyo social y la continuidad de sus hábitos de higiene mental preventivos."
 
@@ -302,13 +302,13 @@ def generar_expediente_word(p, df_resp, df_perfil):
     return output.getvalue()
 
 # =====================================================================
-# 🖥️ 7. INTERFAZ UI (CON SELECTBOX DESPLEGABLE)
+# 🖥️ 7. INTERFAZ UI (CUADRÍCULA VISUAL CON BOTONES V/F)
 # =====================================================================
 with st.sidebar:
-    st.title("MMPI-2 PRO Edición 20")
+    st.title("MMPI-2 PRO Edición 21")
     modulo = st.radio("NAVEGACIÓN DEL SISTEMA:", [
         "👤 1. Ficha y DNI del Paciente", 
-        "📝 2. Tabulación Desplegable",
+        "📝 2. Captura Visual (Grid)",
         "📸 3. Escáner Óptico (OMR)", 
         "📊 4. Dashboard Clínico", 
         "📄 5. Generar Expediente Word"
@@ -317,13 +317,27 @@ with st.sidebar:
     st.write(f"**Paciente:** {st.session_state.paciente['nombre']}")
     st.write(f"**DNI:** {st.session_state.paciente['rut']}")
 
-# LA MAGIA VISUAL: CONFIGURACIÓN DEL SELECTBOX
-config_celda = {
-    "Respuesta": st.column_config.SelectboxColumn(
-        "Opción", help="Haga clic para elegir V o F", options=["V", "F", ""], required=True
-    )
-}
+# Función constructora de la Hoja de Burbujas Visual
+def renderizar_cuadricula_visual(inicio, fin, key_prefix):
+    cols = st.columns(6) # 6 columnas para máxima compactación visual
+    for i in range(inicio, fin + 1):
+        idx_col = (i - inicio) % 6
+        with cols[idx_col]:
+            valor_actual = st.session_state.data.at[i-1, "Respuesta"]
+            idx = 0 if valor_actual == "V" else (1 if valor_actual == "F" else 2)
+            
+            # Selector visible (Botones Radio) en vez de tabla
+            seleccion = st.radio(
+                f"Ítem {i}", 
+                options=["V", "F", "-"], 
+                index=idx, 
+                horizontal=True, 
+                key=f"{key_prefix}_{i}"
+            )
+            # Guardado inmediato en memoria
+            st.session_state.data.at[i-1, "Respuesta"] = seleccion if seleccion != "-" else ""
 
+# --- MÓDULO 1: DATOS ---
 if modulo == "👤 1. Ficha y DNI del Paciente":
     st.header("Identificación y Ficha Clínica")
     st.markdown("<div class='instruction-banner'>Ingrese los datos. El <b>Número de Identidad Nacional (DNI)</b> es obligatorio y funcionará como código único del expediente para asegurar la trazabilidad.</div>", unsafe_allow_html=True)
@@ -344,26 +358,27 @@ if modulo == "👤 1. Ficha y DNI del Paciente":
     p["perito"] = st.text_input("Profesional a Cargo del Peritaje", p["perito"])
     p["motivo"] = st.text_area("Motivo de Evaluación", p["motivo"])
 
-elif modulo == "📝 2. Tabulación Desplegable":
-    st.header("Módulo de Captura (Matriz de Selección)")
-    st.markdown("<div class='instruction-banner'><b>Simplemente haga clic sobre la celda de 'Respuesta' y se desplegará un menú para elegir 'V' o 'F'.</b> Es el método más seguro y libre de errores tipográficos.</div>", unsafe_allow_html=True)
+# --- MÓDULO 2: TABULACIÓN VISUAL (GRID DE BURBUJAS) ---
+elif modulo == "📝 2. Captura Visual (Grid)":
+    st.header("Módulo de Captura (Hoja de Burbujas)")
+    st.markdown("<div class='instruction-banner'><b>Las opciones (V y F) están siempre visibles.</b> Haga clic directamente en la respuesta. El guardado es automático. Hemos dividido los 567 ítems en 3 pestañas para evitar sobrecargar la pantalla.</div>", unsafe_allow_html=True)
     
-    c1, c2, c3 = st.columns(3)
-    with c1:
-        st.markdown("<div class='block-title'>Bloque A (Ítems 1 al 189)</div>", unsafe_allow_html=True)
-        df1 = st.data_editor(st.session_state.data.iloc[0:189], hide_index=True, use_container_width=True, height=550, column_config=config_celda, key="tb1")
-    with c2:
-        st.markdown("<div class='block-title'>Bloque B (Ítems 190 al 378)</div>", unsafe_allow_html=True)
-        df2 = st.data_editor(st.session_state.data.iloc[189:378], hide_index=True, use_container_width=True, height=550, column_config=config_celda, key="tb2")
-    with c3:
-        st.markdown("<div class='block-title'>Bloque C (Ítems 379 al 567)</div>", unsafe_allow_html=True)
-        df3 = st.data_editor(st.session_state.data.iloc[378:567], hide_index=True, use_container_width=True, height=550, column_config=config_celda, key="tb3")
+    tab1, tab2, tab3 = st.tabs(["📋 Bloque A (Ítems 1 - 189)", "📋 Bloque B (Ítems 190 - 378)", "📋 Bloque C (Ítems 379 - 567)"])
     
-    st.session_state.data = pd.concat([df1, df2, df3], ignore_index=True)
+    with tab1:
+        st.markdown("<div class='block-title'>Preguntas 1 al 189</div>", unsafe_allow_html=True)
+        renderizar_cuadricula_visual(1, 189, "man")
+    with tab2:
+        st.markdown("<div class='block-title'>Preguntas 190 al 378</div>", unsafe_allow_html=True)
+        renderizar_cuadricula_visual(190, 378, "man")
+    with tab3:
+        st.markdown("<div class='block-title'>Preguntas 379 al 567</div>", unsafe_allow_html=True)
+        renderizar_cuadricula_visual(379, 567, "man")
 
+# --- MÓDULO 3: OMR CON VERIFICACIÓN VISUAL ---
 elif modulo == "📸 3. Escáner Óptico (OMR)":
     st.header("Escáner Inteligente con Verificación Manual")
-    st.markdown("Al subir la fotografía, el sistema procesará las marcas. A continuación, **aparecerá la matriz con los menús desplegables para que revises y corrijas** la lectura de la cámara muy fácilmente.")
+    st.markdown("Al subir la fotografía, el sistema procesará las marcas. A continuación, **aparecerá la cuadrícula con las respuestas visibles para que revises y corrijas** cualquier error con un solo clic.")
     
     up_f = st.file_uploader("Adjuntar fotografía de la hoja (JPG, PNG)", type=['jpg', 'png', 'jpeg'])
     
@@ -381,21 +396,14 @@ elif modulo == "📸 3. Escáner Óptico (OMR)":
             st.rerun()
             
     if st.session_state.get('escaneo_listo', False):
-        st.markdown("<div class='scan-alert'>✅ <b>ESCANEO FINALIZADO.</b> Haga clic en cualquier celda para corregirla usando el menú desplegable (V/F). Los cambios son instantáneos.</div>", unsafe_allow_html=True)
+        st.markdown("<div class='scan-alert'>✅ <b>ESCANEO FINALIZADO.</b> Verifique las respuestas extraídas a continuación. Si la cámara cometió un error, simplemente haga clic en 'V' o 'F' para corregirlo.</div>", unsafe_allow_html=True)
         
-        c1, c2, c3 = st.columns(3)
-        with c1:
-            st.markdown("<div class='block-title'>Revisión Bloque A</div>", unsafe_allow_html=True)
-            df_omr1 = st.data_editor(st.session_state.data.iloc[0:189], hide_index=True, use_container_width=True, height=550, column_config=config_celda, key="om1")
-        with c2:
-            st.markdown("<div class='block-title'>Revisión Bloque B</div>", unsafe_allow_html=True)
-            df_omr2 = st.data_editor(st.session_state.data.iloc[189:378], hide_index=True, use_container_width=True, height=550, column_config=config_celda, key="om2")
-        with c3:
-            st.markdown("<div class='block-title'>Revisión Bloque C</div>", unsafe_allow_html=True)
-            df_omr3 = st.data_editor(st.session_state.data.iloc[378:567], hide_index=True, use_container_width=True, height=550, column_config=config_celda, key="om3")
-        
-        st.session_state.data = pd.concat([df_omr1, df_omr2, df_omr3], ignore_index=True)
+        t1, t2, t3 = st.tabs(["Revisión 1-189", "Revisión 190-378", "Revisión 379-567"])
+        with t1: renderizar_cuadricula_visual(1, 189, "omr")
+        with t2: renderizar_cuadricula_visual(190, 378, "omr")
+        with t3: renderizar_cuadricula_visual(379, 567, "omr")
 
+# --- MÓDULO 4: DASHBOARD CLÍNICO ---
 elif modulo == "📊 4. Dashboard Clínico":
     st.header(f"Dashboard y Resultados de: {st.session_state.paciente['nombre']}")
     
@@ -417,7 +425,7 @@ elif modulo == "📊 4. Dashboard Clínico":
         
     df_perfil = pd.DataFrame(perfil)
     
-    tab1, tab2, tab3 = st.tabs(["📝 Síntesis Clínica", "📈 Gráficas Oficiales", "⚙️ Áreas Clínicas Completas"])
+    tab1, tab2, tab3 = st.tabs(["📝 Síntesis Clínica IA", "📈 Gráficas Oficiales", "⚙️ Análisis de 12 Áreas"])
     
     with tab1:
         texto_ia = MotorDiagnosticoIntegral.generar_diagnostico_narrativo(df_perfil, st.session_state.paciente)
@@ -429,7 +437,6 @@ elif modulo == "📊 4. Dashboard Clínico":
         
     with tab3:
         st.markdown("### Evaluación de las 12 Áreas Específicas")
-        st.write("A continuación se detallan todas las áreas, garantizando un análisis minucioso y sin omitir ninguna dimensión.")
         for _, row in df_perfil.iterrows():
             css_class = "scale-card elevated-scale" if row['T'] >= 65 else "scale-card normal-scale"
             st.markdown(f"""
@@ -439,6 +446,7 @@ elif modulo == "📊 4. Dashboard Clínico":
             </div>
             """, unsafe_allow_html=True)
 
+# --- MÓDULO 5: EXPORTACIÓN WORD ---
 elif modulo == "📄 5. Generar Expediente Word":
     st.header("Impresión de Documentación Oficial")
     st.markdown("<div class='instruction-banner'>El sistema integrará todos los datos en un expediente formal, empleando el DNI como código vinculante. El informe garantizará la presencia íntegra de las 12 áreas evaluadas.</div>", unsafe_allow_html=True)
@@ -456,9 +464,7 @@ elif modulo == "📄 5. Generar Expediente Word":
             perfil = [{"Escala": e, "Area": diccionario_clinico[e]["Area"], "PD": pd_final[e], "T": obtener_puntuacion_t_real(e, pd_final[e], st.session_state.paciente["sexo"]), "Nivel": "Elevado" if obtener_puntuacion_t_real(e, pd_final[e], st.session_state.paciente["sexo"]) >= 65 else "Normal", "Interpretacion": diccionario_clinico[e]["H"] if obtener_puntuacion_t_real(e, pd_final[e], st.session_state.paciente["sexo"]) >= 65 else diccionario_clinico[e]["N"]} for e in pd_final.keys()]
             
             df_perfil = pd.DataFrame(perfil)
-            
             doc_bin = generar_expediente_word(st.session_state.paciente, st.session_state.data, df_perfil)
-            
             dni_archivo = st.session_state.paciente['rut'].replace(' ', '') if st.session_state.paciente['rut'] else "SINDNI"
             
             st.success("✅ Documento de Peritaje generado con éxito.")
