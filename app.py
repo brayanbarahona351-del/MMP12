@@ -354,4 +354,20 @@ elif modulo == "📊 Perfil Clínico e IA":
 
 elif modulo == "📄 Exportación de Informe":
     st.header("Generador de Reporte Institucional")
-    st.info("El documento incluirá: Ficha
+    st.info("El documento incluirá: Ficha técnica, Gráfico de perfil, Análisis narrativo extenso y Protocolo de 567 ítems.")
+    
+    if st.button("🚀 Generar y Descargar MEGA INFORME"):
+        with st.spinner("Compilando gráficos e interpretaciones clínicas..."):
+            df_res_final = procesar_perfil_completo()
+            doc_data = generar_word_abundante_v2(st.session_state.paciente, st.session_state.data, df_res_final)
+            
+            st.success("✅ Documento compilado exitosamente.")
+            st.download_button(
+                label="📥 Descargar Documento Word (.docx)",
+                data=doc_data,
+                file_name=f"Reporte_MMPI2_{st.session_state.paciente['rut']}.docx",
+                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            )
+
+# NOTA FINAL: Función de soporte para exportar
+def generar_word_abundante_v2(p, i, r): return generar_word_completo(p, i, r)
