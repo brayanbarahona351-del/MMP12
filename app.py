@@ -61,6 +61,12 @@ def aplicar_interfaz_premium():
             background-color: white; border: 1px solid #e2e8f0; padding: 15px; border-radius: 10px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
+        
+        /* Títulos de Bloques Compactos */
+        .block-title {
+            text-align: center; color: #1c3d5a; font-size: 16px; font-weight: bold; 
+            background: #e2e8f0; padding: 10px; border-radius: 6px; margin-bottom: 10px;
+        }
     </style>
     """, unsafe_allow_html=True)
 
@@ -95,7 +101,6 @@ inicializar_motor_sesion()
 # =====================================================================
 # ⚙️ 3. MOTOR MATEMÁTICO INTACTO (EXTRAÍDO DE LOS EXCEL)
 # =====================================================================
-# Las plantillas exactas de calificación (Claves Verdadero/Falso)
 PLANTILLAS_CORRECCION = {
     "L (Mentira)": {"V": [], "F": [16, 29, 41, 51, 77, 93, 102, 107, 123, 139, 153, 190, 203, 232, 260]},
     "F (Incoherencia)": {"V": [17, 31, 32, 40, 42, 50, 56, 65, 73, 85, 114, 144, 166, 177, 191, 200, 202, 213, 225, 252, 256, 269, 275, 276, 281, 282, 287, 292, 311, 316, 319, 323, 335, 344, 345, 347, 349, 350, 353, 356, 361, 369, 381, 385, 395, 398, 404, 406, 413, 416, 426, 427, 431, 452, 461, 469, 480, 500, 506, 545, 551, 560, 561], "F": [3, 39]},
@@ -397,10 +402,34 @@ if modulo == "👤 1. Expediente del Paciente":
     p["perito"] = st.text_input("Nombre del Profesional Evaluador", p["perito"])
     p["motivo"] = st.text_area("Motivo de la Evaluación Clínica / Pericial", p["motivo"])
 
+# ==========================================================
+# 📝 MÓDULO 2 REDISEÑADO: TABULACIÓN COMPACTA EN MATRIZ
+# ==========================================================
 elif modulo == "📝 2. Captura de Datos":
-    st.header("Tabulación Manual del Protocolo")
-    st.info("Transcriba las respuestas del cuadernillo (V para Verdadero, F para Falso). El sistema guardará los cambios automáticamente.")
-    st.session_state.data = st.data_editor(st.session_state.data, hide_index=True, use_container_width=True, height=600)
+    st.header("Tabulación Manual Compacta")
+    st.markdown("<div class='instruction-banner'>La matriz de captura ha sido rediseñada en <b>tres bloques paralelos compactos</b> para reducir la fatiga visual y el desplazamiento vertical. Ingrese 'V' o 'F' según corresponda.</div>", unsafe_allow_html=True)
+    
+    # División de la pantalla en 3 columnas
+    c1, c2, c3 = st.columns(3)
+    
+    with c1:
+        st.markdown("<div class='block-title'>Bloque 1 (Ítems 1 al 189)</div>", unsafe_allow_html=True)
+        # Extraer el trozo correspondiente y editarlo
+        ed_1 = st.data_editor(st.session_state.data.iloc[0:189], hide_index=True, use_container_width=True, height=450, key="d1")
+        # Actualizar los datos generales con lo editado
+        st.session_state.data.update(ed_1)
+        
+    with c2:
+        st.markdown("<div class='block-title'>Bloque 2 (Ítems 190 al 378)</div>", unsafe_allow_html=True)
+        ed_2 = st.data_editor(st.session_state.data.iloc[189:378], hide_index=True, use_container_width=True, height=450, key="d2")
+        st.session_state.data.update(ed_2)
+        
+    with c3:
+        st.markdown("<div class='block-title'>Bloque 3 (Ítems 379 al 567)</div>", unsafe_allow_html=True)
+        ed_3 = st.data_editor(st.session_state.data.iloc[378:567], hide_index=True, use_container_width=True, height=450, key="d3")
+        st.session_state.data.update(ed_3)
+        
+    st.success("💾 Autosoguardado activo. Puede cambiar de pestaña o módulo sin perder la información tabulada.")
 
 elif modulo == "📸 3. Escáner Óptico (OMR)":
     st.header("Digitalización Óptica de Protocolos")
@@ -417,7 +446,6 @@ elif modulo == "📸 3. Escáner Óptico (OMR)":
                 for pt in range(100):
                     time.sleep(0.02)
                     barra.progress(pt + 1, text=f"Procesando área del reactivo {int((pt/100)*567)}...")
-                # Simulación de extracción para demo
                 for i in range(TOTAL_ITEMS): st.session_state.data.at[i, "Respuesta"] = "V" if np.random.rand() > 0.5 else "F"
                 st.success("✅ Extracción óptica finalizada. Vaya al Dashboard de Resultados.")
 
@@ -427,15 +455,12 @@ elif modulo == "📊 4. Dashboard de Resultados":
     # --- CÁLCULO MATEMÁTICO REAL INTACTO ---
     resp = dict(zip(st.session_state.data["Nº"], st.session_state.data["Respuesta"]))
     
-    # Puntuaciones Directas (PD)
     pd_final = {esc: sum(1 for i in c["V"] if resp.get(i)=="V") + sum(1 for i in c["F"] if resp.get(i)=="F") for esc, c in PLANTILLAS_CORRECCION.items()}
     
-    # Aplicación de Fracciones K
     k = pd_final.get("K (Defensividad)", 0)
     for e, f in FRACCIONES_K.items(): 
         if e in pd_final: pd_final[e] += int(round(k * f))
 
-    # Construcción del Perfil con Análisis IA
     diccionario_clinico = MotorDiagnosticoIntegral.obtener_diccionario_escalas()
     perfil = []
     for e in pd_final.keys():
@@ -460,7 +485,6 @@ elif modulo == "📊 4. Dashboard de Resultados":
         
     with tab3:
         st.subheader("Desglose Cuantitativo y Cualitativo")
-        # Mostrar métricas en columnas
         elevadas = df_perfil[df_perfil['T'] >= 65]
         if not elevadas.empty:
             st.error(f"Alerta: Se han detectado {len(elevadas)} escalas en nivel clínico patológico (T ≥ 65).")
@@ -471,7 +495,6 @@ elif modulo == "📊 4. Dashboard de Resultados":
             st.success("Excelente: Todas las escalas clínicas se encuentran dentro del rango normativo.")
             
         st.divider()
-        # Tarjetas expansibles para cada escala
         for _, row in df_perfil.iterrows():
             css_class = "scale-card elevated-scale" if row['T'] >= 65 else "scale-card normal-scale"
             st.markdown(f"""
@@ -488,7 +511,6 @@ elif modulo == "📄 5. Exportar Informe Pericial":
     
     if st.button("🚀 INICIAR COMPILACIÓN Y DESCARGA (.DOCX)"):
         with st.spinner("Construyendo expediente forense y clínico..."):
-            # Recálculo final seguro antes de imprimir
             resp = dict(zip(st.session_state.data["Nº"], st.session_state.data["Respuesta"]))
             pd_final = {e: sum(1 for i in c["V"] if resp.get(i)=="V") + sum(1 for i in c["F"] if resp.get(i)=="F") for e, c in PLANTILLAS_CORRECCION.items()}
             k = pd_final.get("K (Defensividad)", 0)
@@ -500,7 +522,6 @@ elif modulo == "📄 5. Exportar Informe Pericial":
             
             df_perfil = pd.DataFrame(perfil)
             
-            # Ejecutar creador de Word
             doc_bin = generar_expediente_word(st.session_state.paciente, st.session_state.data, df_perfil)
             
             st.success("✅ ¡Expediente compilado exitosamente!")
