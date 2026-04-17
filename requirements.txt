@@ -3,5 +3,5 @@ pandas
 plotly
 kaleido==0.1.0post1
 python-docx
-pillow
+Pillow
 numpy
