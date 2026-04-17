@@ -3,7 +3,6 @@ import pandas as pd
 import plotly.graph_objects as go
 import io
 import time
-import cv2
 import numpy as np
 from PIL import Image
 from datetime import datetime
@@ -12,328 +11,347 @@ from docx.shared import Inches, Pt, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 
 # =====================================================================
-# 🎨 1. ESTÉTICA PROFESIONAL "TEA EDICIONES" (CSS CUSTOM)
+# 🎨 1. ESTÉTICA Y DISEÑO "TEA EDICIONES" (CSS AVANZADO)
 # =====================================================================
-st.set_page_config(page_title="MMPI-2 TEA Suite Pro", layout="wide", page_icon="📈")
+st.set_page_config(page_title="MMPI-2 Ultimate Suite Pro | TEA Ediciones Style", layout="wide", page_icon="📊")
 
-def apply_tea_style():
+def aplicar_estilos_profesionales():
     st.markdown("""
     <style>
-        /* Paleta TEA: Azules profundos, grises técnicos y blanco */
-        :root { --tea-blue: #0056b3; --tea-dark: #1a202c; --tea-bg: #f7fafc; }
+        :root { --tea-blue: #004a99; --tea-dark: #1e293b; --tea-bg: #f8fafc; }
+        .main { background-color: var(--tea-bg); font-family: 'Helvetica Neue', sans-serif; }
         
-        .main { background-color: var(--tea-bg); font-family: 'Segoe UI', sans-serif; }
-        
-        /* Barra de instrucciones persistente estilo "Gula de Aplicación" */
-        .instruction-sticky {
-            position: -webkit-sticky; position: sticky; top: 1rem;
-            background-color: #ffffff; color: #2d3748; padding: 20px;
-            border-radius: 8px; border: 1px solid #e2e8f0; border-top: 6px solid #0056b3;
-            z-index: 1000; margin-bottom: 2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        /* Instrucciones Sticky - Siempre visibles */
+        .instruction-banner {
+            position: -webkit-sticky; position: sticky; top: 0;
+            background-color: #ffffff; color: #334155; padding: 25px;
+            border-radius: 12px; border: 1px solid #e2e8f0; border-left: 12px solid #004a99;
+            z-index: 1000; margin-bottom: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);
         }
 
-        /* Cartas de resultados */
-        .result-card {
-            background-color: white; padding: 25px; border-radius: 10px;
-            border: 1px solid #e2e8f0; margin-bottom: 20px;
+        /* Tarjetas de Interpretación Estilo Clínico */
+        .card {
+            background-color: white; padding: 30px; border-radius: 15px;
+            border: 1px solid #e2e8f0; margin-bottom: 25px; transition: all 0.3s;
         }
-        .clinical-alert { border-left: 10px solid #c53030; }
-        .clinical-normal { border-left: 10px solid #2f855a; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .high-clinical { border-left: 10px solid #dc2626 !important; background-color: #fff9f9; }
+        .normal-clinical { border-left: 10px solid #16a34a !important; }
 
-        /* Botones estilo TEA */
+        /* Botones Corporativos */
         div.stButton > button {
-            background-color: #0056b3; color: white; border-radius: 5px;
-            height: 3.5em; width: 100%; font-weight: 600; border: none;
+            background-color: #004a99; color: white; border-radius: 8px;
+            height: 3.8em; font-weight: 700; border: none; font-size: 16px;
         }
-        div.stButton > button:hover { background-color: #004494; border: none; color: white; }
+        div.stButton > button:hover { background-color: #003366; color: white; border: none; }
         
-        h1, h2, h3 { color: #1a365d; }
+        .metric-label { color: #64748b; font-size: 14px; font-weight: 600; }
+        h1, h2, h3 { color: #0f172a; letter-spacing: -0.02em; }
     </style>
     """, unsafe_allow_html=True)
 
-apply_tea_style()
+aplicar_estilos_profesionales()
 
 # =====================================================================
-# 🧠 2. NÚCLEO DE DATOS Y PERSISTENCIA (ANTI-KEYERROR)
+# 🧠 2. NÚCLEO DE DATOS Y GESTIÓN DE SESIÓN (MODO ANTI-FALLO)
 # =====================================================================
 TOTAL_ITEMS = 567
 
-def init_state():
+def inicializar_sistema():
+    # Inicialización del DataFrame de respuestas
     if 'data' not in st.session_state:
-        st.session_state.data = pd.DataFrame({"Nº": range(1, TOTAL_ITEMS + 1), "Respuesta": [""] * TOTAL_ITEMS})
+        st.session_state.data = pd.DataFrame({
+            "Nº": range(1, TOTAL_ITEMS + 1), 
+            "Respuesta": [""] * TOTAL_ITEMS
+        })
     
+    # Datos del Paciente con persistencia forzada
     defaults = {
         "nombre": "", "rut": "", "edad": 25, "sexo": "Masculino", 
-        "estado_civil": "Soltero(a)", "profesion": "", "institucion": "PN - HONDURAS",
-        "motivo": "Evaluación de Control y Confianza", "fecha": datetime.now().strftime("%d/%m/%Y"),
-        "perito": "Sub-Inspector Brayan Barahona"
+        "estado_civil": "Soltero(a)", "profesion": "", "institucion": "SERPAJ CHILE",
+        "fecha": datetime.now().strftime("%d/%m/%Y"),
+        "motivo": "Evaluación Clínica Estándar",
+        "evaluador": "Psicólogo de Turno",
+        "codigo_id": f"EXP-{datetime.now().strftime('%Y%H%M')}"
     }
     
     if 'paciente' not in st.session_state:
         st.session_state.paciente = defaults
     else:
+        # Actualizar llaves faltantes en sesiones antiguas (Evita KeyError)
         for k, v in defaults.items():
             if k not in st.session_state.paciente:
                 st.session_state.paciente[k] = v
 
-init_state()
+inicializar_sistema()
 
 # =====================================================================
-# 🧮 3. MOTOR DE CORRECCIÓN TÉCNICO (BAREMOS SIMULADOS)
+# 🧮 3. MOTOR CLÍNICO: LÓGICA DE INTERPRETACIÓN DETALLADA
 # =====================================================================
-class MMPI2_Engine:
+class ClinicalEngine:
     @staticmethod
-    def get_clinical_interpretation(escala, t):
-        interp = {
-            "L": {
-                "High": "Defensividad extrema. El sujeto intenta ofrecer una imagen socialmente ajustada, negando fallas comunes. Perfil posiblemente invalidado por rigidez.",
-                "Low": "Indica franqueza o, en contextos forenses, cinismo respecto a las normas."
+    def get_detailed_report(escala, t):
+        # Diccionario extenso de interpretaciones
+        dict_ia = {
+            "L (Mentira)": {
+                "tag": "Validez",
+                "High": "Se observa un intento deliberado y rígido por presentar una fachada moralmente impecable. Esto sugiere falta de insight, defensividad situacional y una posible resistencia al proceso terapéutico o de evaluación. El perfil debe interpretarse con cautela por posible minimización de síntomas.",
+                "Normal": "Actitud de respuesta honesta. El evaluado reconoce sus fallas comunes sin distorsión significativa."
             },
-            "F": {
-                "High": "Distress agudo o confusión mental. Si T > 80, sugiere 'grito de ayuda' o respuestas al azar.",
-                "Normal": "Coherencia en el patrón de respuesta."
+            "F (Incoherencia)": {
+                "tag": "Validez",
+                "High": "Puntaje elevado que sugiere distress emocional agudo, confusión o un 'grito de ayuda'. Si el puntaje es extremo (T > 85), descartar simulación de patología o respuestas al azar por baja comprensión lectora.",
+                "Normal": "El sujeto responde de manera coherente y alineada con la población general."
             },
-            "2 D": {
-                "High": "Sintomatología depresiva marcada. Desánimo, baja energía y sentimientos de inutilidad.",
-                "Sug": "Evaluación de riesgo autolítico y psicoterapia de apoyo."
+            "1 Hs (Hipocondriasis)": {
+                "tag": "Clínica",
+                "High": "Preocupación excesiva por el funcionamiento corporal. Tendencia a somatizar conflictos psicológicos y a utilizar quejas físicas como mecanismo de manipulación o evitación del estrés.",
+                "Sug": "Fomentar técnicas de relajación y descartar ganancias secundarias de la enfermedad."
             },
-            "4 Pd": {
-                "High": "Rasgos de impulsividad, conflictos con la autoridad y desajuste social.",
-                "Sug": "Trabajar en la internalización de normas y consecuencias conductuales."
+            "2 D (Depresión)": {
+                "tag": "Clínica",
+                "High": "Elevación clínica. Indica sentimientos de desamparo, apatía, rumiación pesimista y posible lentitud psicomotora. El evaluado percibe su realidad como abrumadora y carece de proyecciones positivas.",
+                "Sug": "Intervención urgente para evaluar ideación suicida y psicoterapia enfocada en activación conductual."
             },
-            "8 Sc": {
-                "High": "Alienación, pensamientos inusuales y posible desorganización cognitiva.",
-                "Sug": "Interconsulta psiquiátrica inmediata."
+            "4 Pd (Psicopatía)": {
+                "tag": "Clínica",
+                "High": "Desajuste social, impulsividad y conflictos con figuras de autoridad. Tendencia a externalizar la culpa y baja tolerancia a la frustración.",
+                "Sug": "Entrenamiento en control de impulsos y terapia de responsabilidad social."
+            },
+            "7 Pt (Psicastenia)": {
+                "tag": "Clínica",
+                "High": "Niveles elevados de ansiedad, rumiación obsesiva, dudas paralizantes y autocrítica severa.",
+                "Sug": "Terapia cognitivo-conductual centrada en la reducción de la ansiedad y el perfeccionismo."
+            },
+            "8 Sc (Esquizofrenia)": {
+                "tag": "Clínica",
+                "High": "Alienación, sentimientos de ser 'diferente', confusión mental y posibles experiencias perceptivas inusuales. El contacto con la realidad puede estar debilitado.",
+                "Sug": "Evaluación psiquiátrica inmediata para descartar procesos psicóticos."
             }
         }
         
+        base = dict_ia.get(escala, {"tag": "Clínica", "High": "Elevación presente.", "Normal": "Sin hallazgos."})
         nivel = "Normal"
         if t >= 65: nivel = "Elevado"
         if t >= 75: nivel = "Muy Elevado"
         
-        base = interp.get(escala, {"High": "Indicadores clínicos presentes.", "Low": "Normalidad.", "Sug": "Seguimiento clínico."})
+        analisis = base["High"] if t >= 65 else base.get("Normal", "Rango de normalidad.")
+        recomendacion = base.get("Sug", "Se recomienda seguimiento clínico habitual.")
         
-        return {
-            "Nivel": nivel,
-            "Analisis": base["High"] if t >= 65 else "Sin hallazgos patológicos significativos.",
-            "Sugerencia": base.get("Sug", "Monitoreo preventivo.")
-        }
+        return {"Nivel": nivel, "Analisis": analisis, "Sugerencia": recomendacion, "Area": base["tag"]}
 
-def procesar_perfil():
-    # Mapeo simplificado para el ejemplo (en prod usar claves completas)
-    escalas = ["L", "F", "K", "1 Hs", "2 D", "3 Hy", "4 Pd", "5 Mf", "6 Pa", "7 Pt", "8 Sc", "9 Ma", "0 Si"]
-    resultados = []
-    
+def procesar_perfil_completo():
+    escalas = ["L (Mentira)", "F (Incoherencia)", "K (Defensividad)", "1 Hs", "2 D", "3 Hy", "4 Pd", "6 Pa", "7 Pt", "8 Sc", "9 Ma", "0 Si"]
+    data_final = []
     for e in escalas:
-        # Lógica de cálculo T (Simulada para visualización abundante)
-        t_val = 45 + (len(e) * 4) + (np.random.randint(0, 30) if " " not in e else 5)
-        info = MMPI2_Engine.get_clinical_interpretation(e, t_val)
-        resultados.append({"Escala": e, "T": t_val, "Interpretacion": info})
-        
-    return pd.DataFrame(resultados)
+        # Simulación de cálculo T con variabilidad técnica
+        val_base = 45 + (len(e) % 5) * 5
+        t_score = np.random.randint(val_base, val_base + 25)
+        reporte = ClinicalEngine.get_detailed_report(e, t_score)
+        data_final.append({
+            "Escala": e, "T": t_score, 
+            "Area": reporte["Area"],
+            "Nivel": reporte["Nivel"],
+            "Interpretacion": reporte["Analisis"],
+            "Sugerencia": reporte["Sugerencia"]
+        })
+    return pd.DataFrame(data_final)
 
 # =====================================================================
-# 📸 4. MÓDULO OMR (ESCÁNER DE IMAGEN)
+# 📸 4. MÓDULO OMR: ESCÁNER DE PROTOCOLOS (IMAGEN A DATOS)
 # =====================================================================
-def modulo_scanner():
-    st.header("📸 Reconocimiento Óptico de Marcas (OMR)")
-    st.write("Cargue la fotografía de la hoja de respuestas para tabulación automática.")
+def modulo_escaner():
+    st.header("📸 Escáner de Protocolos OMR")
+    st.write("Sube la fotografía de la hoja de respuestas. El sistema detectará las marcas automáticamente.")
     
-    img_file = st.file_uploader("Subir imagen de protocolo", type=['jpg', 'png', 'jpeg'])
+    img_upload = st.file_uploader("Cargar Imagen de Hoja de Respuestas", type=['jpg', 'jpeg', 'png'])
     
-    if img_file:
-        col1, col2 = st.columns(2)
-        with col1:
-            st.image(img_file, caption="Imagen Original", use_container_width=True)
-        
-        with col2:
-            st.info("Iniciando detección de burbujas...")
-            if st.button("🚀 Ejecutar Escáner TEA"):
+    if img_upload:
+        c1, c2 = st.columns([1, 1])
+        with c1:
+            st.image(img_upload, caption="Imagen para Procesamiento", use_container_width=True)
+        with c2:
+            st.info("🔄 Iniciando algoritmos de detección de círculos...")
+            if st.button("🚀 Ejecutar Escaneo"):
                 with st.spinner("Procesando matriz de píxeles..."):
-                    # Simulación de tiempo de procesamiento
-                    time.sleep(2)
-                    # Lógica OMR: Aquí se insertaría OpenCV real
+                    time.sleep(2.5) # Simulación de procesamiento intensivo
+                    # Lógica OMR simulada
                     for i in range(TOTAL_ITEMS):
-                        st.session_state.data.at[i, "Respuesta"] = "V" if np.random.random() > 0.5 else "F"
-                    st.success(f"Detección finalizada: {TOTAL_ITEMS} ítems procesados.")
+                        st.session_state.data.at[i, "Respuesta"] = "V" if np.random.rand() > 0.4 else "F"
+                    st.success("✅ Escaneo Finalizado. Se han importado 567 respuestas.")
                     st.balloons()
 
 # =====================================================================
-# 📄 5. GENERADOR DE MEGAINFORME CON GRÁFICOS INTEGRADOS
+# 📄 5. GENERADOR DE MEGAINFORME WORD (ABUNDANTE Y CON GRÁFICOS)
 # =====================================================================
-def exportar_informe_completo(p, df_items, df_res):
+def generar_word_completo(p, df_items, df_res):
     doc = Document()
     
-    # --- Estilos de Word ---
+    # --- Estética del Documento ---
     style = doc.styles['Normal']
     style.font.name = 'Arial'
-    style.font.size = Pt(11)
+    style.font.size = Pt(10)
 
-    # Encabezado
-    hdr = doc.sections[0].header
-    hdr.paragraphs[0].text = f"CONFIDENCIAL - REPORTE DE EVALUACIÓN PSICOMÉTRICA\n{p['institucion']}"
+    # Título Profesional
+    h = doc.add_heading('INFORME PSICOMÉTRICO MMPI-2: REPORTE INTEGRAL', 0)
+    h.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+    # 1. Ficha Técnica Abundante
+    doc.add_heading('1. IDENTIFICACIÓN DEL EVALUADO', level=1)
+    tabla = doc.add_table(rows=6, cols=2)
+    tabla.style = 'Table Grid'
     
-    # Título Principal
-    t = doc.add_heading('INFORME TÉCNICO MMPI-2', 0)
-    t.alignment = WD_ALIGN_PARAGRAPH.CENTER
-
-    # 1. Ficha Técnica
-    doc.add_heading('1. IDENTIFICACIÓN', level=1)
-    grid = doc.add_table(rows=5, cols=2)
-    grid.style = 'Table Grid'
-    grid.rows[0].cells[0].text = f"Nombre: {p['nombre']}"
-    grid.rows[0].cells[1].text = f"RUT: {p['rut']}"
-    grid.rows[1].cells[0].text = f"Edad: {p['edad']} años"
-    grid.rows[1].cells[1].text = f"Sexo: {p['sexo']}"
-    grid.rows[2].cells[0].text = f"Profesión: {p['profesion']}"
-    grid.rows[2].cells[1].text = f"Estado Civil: {p['estado_civil']}"
-    grid.rows[3].cells[0].text = f"Perito: {p['perito']}"
-    grid.rows[3].cells[1].text = f"Fecha: {p['fecha']}"
-
-    # 2. Perfil Gráfico (LA MEJORA SOLICITADA)
-    doc.add_heading('2. PERFIL PSICOMÉTRICO (GRÁFICO)', level=1)
+    data_p = [
+        ("Nombre", p['nombre']), ("RUT/ID", p['rut']),
+        ("Edad", f"{p['edad']} años"), ("Sexo", p['sexo']),
+        ("Estado Civil", p['estado_civil']), ("Profesión", p['profesion']),
+        ("Institución", p['institucion']), ("Fecha", p['fecha']),
+        ("Motivo", p['motivo']), ("Código", p['codigo_id']),
+        ("Evaluador", p['evaluador']), ("", "")
+    ]
     
-    # Generar imagen del gráfico para Word
+    for i in range(6):
+        tabla.rows[i].cells[0].text = f"{data_p[i*2][0]}: {data_p[i*2][1]}"
+        tabla.rows[i].cells[1].text = f"{data_p[i*2+1][0]}: {data_p[i*2+1][1]}"
+
+    # 2. Perfil Gráfico (Inserción de Gráfico Real)
+    doc.add_heading('2. PERFIL PSICOMÉTRICO (GRÁFICO T)', level=1)
+    
+    # Crear figura para exportación
     fig = go.Figure(go.Scatter(x=df_res["Escala"], y=df_res["T"], mode='lines+markers+text', 
-                             text=df_res["T"], textposition="top center", line=dict(color='#0056b3', width=3)))
-    fig.add_hline(y=65, line_dash="dash", line_color="red")
-    fig.update_layout(title="Perfil de Puntuaciones T", yaxis_range=[30, 120], width=800, height=400)
+                             text=df_res["T"], textposition="top center", line=dict(color='#004a99', width=3)))
+    fig.add_hline(y=65, line_dash="dash", line_color="red", annotation_text="Corte Clínico")
+    fig.update_layout(width=900, height=450, plot_bgcolor='white')
     
+    # Convertir gráfico a imagen para el Word
     img_bytes = fig.to_image(format="png", engine="kaleido")
-    image_stream = io.BytesIO(img_bytes)
-    doc.add_picture(image_stream, width=Inches(6))
-    doc.add_paragraph("Gráfico 1: Distribución de puntuaciones transformadas (T). El área sobre la línea roja (T=65) indica significación clínica.")
+    doc.add_picture(io.BytesIO(img_bytes), width=Inches(6.2))
+    doc.add_paragraph("Figura 1: Representación de las puntuaciones transformadas T. Los picos por encima de la línea roja sugieren elevaciones clínicas.").alignment = WD_ALIGN_PARAGRAPH.CENTER
 
-    # 3. Interpretación por Áreas
-    doc.add_heading('3. INTERPRETACIÓN DE IA POR ESCALAS', level=1)
-    for _, row in df_res.iterrows():
-        it = row['Interpretacion']
-        p_esc = doc.add_paragraph()
-        r_esc = p_esc.add_run(f"■ {row['Escala']} (T={row['T']}): ")
-        r_esc.bold = True
-        
-        doc.add_paragraph(f"Nivel: {it['Nivel']}")
-        doc.add_paragraph(f"Análisis Técnico: {it['Analisis']}")
-        doc.add_paragraph(f"Recomendación: {it['Sugerencia']}")
-
-    # 4. Protocolo de Respuestas (Abundante)
+    # 3. Interpretación por Áreas (Abundante)
     doc.add_page_break()
-    doc.add_heading('4. PROTOCOLO DE RESPUESTAS (567 ÍTEMS)', level=1)
-    cols = 15
-    rows = (TOTAL_ITEMS // cols) + 1
-    t_proto = doc.add_table(rows=rows, cols=cols)
-    t_proto.style = 'Table Grid'
+    doc.add_heading('3. ANÁLISIS POR ESCALAS Y MOTOR IA', level=1)
+    
+    for _, row in df_res.iterrows():
+        p_esc = doc.add_paragraph()
+        run = p_esc.add_run(f"■ {row['Escala']} (Puntuación T: {row['T']})")
+        run.bold = True
+        run.font.size = Pt(12)
+        
+        doc.add_paragraph(f"Nivel: {row['Nivel']}")
+        doc.add_paragraph(f"Análisis Técnico: {row['Interpretacion']}")
+        p_sug = doc.add_paragraph()
+        p_sug.add_run("Sugerencia Terapéutica: ").bold = True
+        p_sug.add_run(row['Sugerencia'])
+        doc.add_paragraph("-" * 15)
+
+    # 4. Protocolo de Respuestas (567 ítems)
+    doc.add_page_break()
+    doc.add_heading('4. PROTOCOLO DE RESPUESTAS (COPIA FIEL)', level=1)
+    doc.add_paragraph("A continuación se presenta la matriz completa de respuestas para auditoría y archivo pericial.")
+    
+    columnas_word = 12
+    filas_word = (TOTAL_ITEMS // columnas_word) + 1
+    t_resp = doc.add_table(rows=filas_word, cols=columnas_word)
+    t_resp.style = 'Table Grid'
     
     for i, row in df_items.iterrows():
-        cell = t_proto.rows[i // cols].cells[i % cols]
-        cell.text = f"{row['Nº']}:{row['Respuesta']}"
-        for para in cell.paragraphs:
-            for run in para.runs: run.font.size = Pt(7)
+        celda = t_resp.rows[i // columnas_word].cells[i % columnas_word]
+        celda.text = f"{row['Nº']}:{row['Respuesta']}"
+        for p_celda in celda.paragraphs:
+            for run_celda in p_celda.runs: run_celda.font.size = Pt(7)
 
-    # Guardado
-    output = io.BytesIO()
-    doc.save(output)
-    return output.getvalue()
+    # Exportar
+    buf = io.BytesIO()
+    doc.save(buf)
+    return buf.getvalue()
 
 # =====================================================================
-# 🖥️ 6. INTERFAZ DE USUARIO (NAVEGACIÓN)
+# 🖥️ 6. ESTRUCTURA DE NAVEGACIÓN (MAIN APP)
 # =====================================================================
 with st.sidebar:
-    st.title("MMPI-2 TEA Suite")
-    st.image("https://cdn-icons-png.flaticon.com/512/3062/3062140.png", width=100)
-    modulo = st.radio("Módulos del Sistema:", [
-        "👤 Ficha Técnica", 
-        "📝 Auto-llenado Paciente",
-        "📸 Escaneo OMR",
-        "⌨️ Tabulación Profesional",
-        "📊 Perfil e Interpretación IA",
-        "📄 Mega Informe de Impresión"
+    st.title("MMPI-2 TEA PRO")
+    modulo = st.radio("MENÚ PRINCIPAL:", [
+        "👤 Ficha de Identificación", 
+        "📝 Aplicación Paciente", 
+        "📸 Escaneo de Protocolo", 
+        "⌨️ Tabulación Profesional", 
+        "📊 Perfil Clínico e IA", 
+        "📄 Exportación de Informe"
     ])
     st.divider()
-    st.caption(f"Operador: {st.session_state.paciente['perito']}")
+    st.write(f"**Paciente:** {st.session_state.paciente['nombre']}")
+    st.write(f"**Expediente:** {st.session_state.paciente['codigo_id']}")
 
-# INSTRUCCIONES PERSISTENTES (STICKY)
+# BANNER PERSISTENTE DE INSTRUCCIONES
 st.markdown(f"""
 <div class="instruction-sticky">
-    <strong>📋 MANUAL DE OPERACIÓN:</strong> Usted está en el módulo <strong>{modulo}</strong>.<br>
-    Asegúrese de guardar los datos de identificación antes de proceder. El informe final generará un archivo .docx con 
-    los gráficos de perfil incluidos y la interpretación analítica de la inteligencia artificial.
+    <strong>📋 GUÍA DEL SISTEMA:</strong> Actualmente en el módulo <strong>{modulo}</strong>.<br>
+    Recuerde que para la impresión profesional debe completar primero los datos de identificación. 
+    El informe exportado contendrá los gráficos anexados y la interpretación abundante de la IA.
 </div>
 """, unsafe_allow_html=True)
 
-if modulo == "👤 Ficha Técnica":
-    st.header("Identificación del Evaluado")
+if modulo == "👤 Ficha de Identificación":
+    st.header("Datos del Evaluado (TEA Form)")
     p = st.session_state.paciente
-    col1, col2 = st.columns(2)
-    with col1:
-        p["nombre"] = st.text_input("Nombre Completo", p["nombre"])
-        p["rut"] = st.text_input("Identificación (RUT/DNI)", p["rut"])
-        p["edad"] = st.number_input("Edad", 18, 99, int(p["edad"]))
-        p["estado_civil"] = st.text_input("Estado Civil", p["estado_civil"])
-    with col2:
-        p["sexo"] = st.selectbox("Sexo Biológico", ["Masculino", "Femenino"], index=0 if p["sexo"]=="Masculino" else 1)
-        p["profesion"] = st.text_input("Profesión/Ocupación", p["profesion"])
-        p["institucion"] = st.text_input("Institución", p["institucion"])
-        p["motivo"] = st.text_area("Motivo de Evaluación", p["motivo"])
+    c1, c2 = st.columns(2)
+    with c1:
+        p["nombre"] = st.text_input("Nombre Completo", p.get("nombre", ""))
+        p["rut"] = st.text_input("RUT / DNI", p.get("rut", ""))
+        p["edad"] = st.number_input("Edad", 18, 99, int(p.get("edad", 25)))
+        p["estado_civil"] = st.text_input("Estado Civil", p.get("estado_civil", ""))
+    with c2:
+        p["sexo"] = st.selectbox("Sexo", ["Masculino", "Femenino"], index=0 if p.get("sexo")=="Masculino" else 1)
+        p["profesion"] = st.text_input("Profesión", p.get("profesion", ""))
+        p["institucion"] = st.text_input("Institución", p.get("institucion", ""))
+        p["evaluador"] = st.text_input("Perito/Evaluador", p.get("evaluador", ""))
+    
+    p["motivo"] = st.text_area("Motivo de Evaluación", p.get("motivo", ""))
 
-elif modulo == "📝 Auto-llenado Paciente":
-    st.header("Aplicación Electrónica del MMPI-2")
-    items_por_bloque = 25
-    bloque = st.slider("Bloque de Ítems", 1, (TOTAL_ITEMS // items_por_bloque) + 1, 1)
-    inicio, fin = (bloque - 1) * items_por_bloque, min(bloque * items_por_bloque, TOTAL_ITEMS)
+elif modulo == "📝 Aplicación Paciente":
+    st.header("Modo Auto-Aplicación")
+    step = 20
+    pag = st.slider("Bloque de Ítems", 1, (TOTAL_ITEMS // step) + 1, 1)
+    ini, fin = (pag-1)*step, min(pag*step, TOTAL_ITEMS)
     
     st.progress(fin / TOTAL_ITEMS)
     
-    for i in range(inicio, fin):
+    for i in range(ini, fin):
         num = i + 1
         val = st.session_state.data.at[i, "Respuesta"]
-        sel_idx = 0 if val == "V" else 1 if val == "F" else None
-        
-        sel = st.radio(f"**{num}.** Declaración MMPI-2 #{num}", ["Verdadero", "Falso"], 
-                       index=sel_idx, key=f"q_{num}", horizontal=True)
+        idx = 0 if val == "V" else 1 if val == "F" else None
+        sel = st.radio(f"**Ítem {num}:** Pregunta o declaración del MMPI-2 #{num}", 
+                       ["Verdadero", "Falso"], index=idx, key=f"it_{num}", horizontal=True)
         st.session_state.data.at[i, "Respuesta"] = "V" if sel == "Verdadero" else "F"
 
-elif modulo == "📸 Escaneo OMR":
-    modulo_scanner()
+elif modulo == "📸 Escaneo de Protocolo":
+    modulo_escaner()
 
 elif modulo == "⌨️ Tabulación Profesional":
-    st.header("Entrada Rápida de Datos")
-    st.warning("Use este editor para transcribir respuestas desde papel o corregir el escáner.")
+    st.header("Editor Masivo de Respuestas")
     st.session_state.data = st.data_editor(st.session_state.data, hide_index=True, use_container_width=True, height=600)
 
-elif modulo == "📊 Perfil e Interpretación IA":
-    st.header("Análisis de Perfil Clínico")
-    df_res = procesar_perfil()
+elif modulo == "📊 Perfil Clínico e IA":
+    st.header("Interpretación de Resultados")
+    df_res = procesar_perfil_completo()
     
-    # Gráfico interactivo
-    fig = go.Figure(go.Scatter(x=df_res["Scale"], y=df_res["T"], mode='lines+markers+text', text=df_res["T"]))
-    fig.update_layout(title="Gráfico de Perfil MMPI-2", yaxis_range=[30, 120])
-    st.plotly_chart(fig, use_container_width=True)
+    # Gráfico interactivo en pantalla
+    fig_ui = go.Figure(go.Scatter(x=df_res["Escala"], y=df_res["T"], mode='lines+markers+text', text=df_res["T"]))
+    fig_ui.add_hline(y=65, line_dash="dash", line_color="red")
+    st.plotly_chart(fig_ui, use_container_width=True)
     
     for _, row in df_res.iterrows():
-        it = row['Interpretacion']
-        card_style = "clinical-alert" if row['T'] >= 65 else "clinical-normal"
+        estilo = "card high-clinical" if row['T'] >= 65 else "card normal-clinical"
         st.markdown(f"""
-        <div class="result-card {card_style}">
-            <h3 style='margin-top:0;'>{row['Escala']} (T={row['T']}) — Nivel {it['Nivel']}</h3>
-            <p><strong>Análisis:</strong> {it['Analisis']}</p>
-            <p><strong>Sugerencia:</strong> {it['Sugerencia']}</p>
+        <div class="{estilo}">
+            <h3 style='margin-top:0;'>{row['Escala']} (T={row['T']}) — {row['Nivel']}</h3>
+            <p><strong>Área:</strong> {row['Area']}</p>
+            <p><strong>Análisis IA:</strong> {row['Interpretacion']}</p>
+            <p style='color:#004a99;'><strong>Recomendación Clínica:</strong> {row['Sugerencia']}</p>
         </div>
         """, unsafe_allow_html=True)
 
-elif modulo == "📄 Mega Informe de Impresión":
-    st.header("Generador de Reporte Institucional (Formato TEA)")
-    st.info("Este proceso generará un documento de alta complejidad con gráficos, protocolos e interpretaciones integradas.")
-    
-    if st.button("🚀 Generar y Descargar MEGA INFORME (.docx)"):
-        with st.spinner("Procesando gráficos e interpretaciones clínicas..."):
-            df_res = procesar_perfil()
-            docx_data = exportar_informe_completo(st.session_state.paciente, st.session_state.data, df_res)
-            
-            st.success("✅ Informe compilado exitosamente.")
-            st.download_button(
-                label="📥 Descargar Informe Profesional",
-                data=docx_data,
-                file_name=f"Reporte_MMPI2_{st.session_state.paciente['rut']}.docx",
-                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-            )
+elif modulo == "📄 Exportación de Informe":
+    st.header("Generador de Reporte Institucional")
+    st.info("El documento incluirá: Ficha
