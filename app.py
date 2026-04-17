@@ -198,13 +198,13 @@ def generar_informe_profesional_word(p, df_items, df_res):
         fig.add_hline(y=65, line_dash="dash", line_color="red", annotation_text="Corte Clínico")
         fig.update_layout(width=950, height=450, plot_bgcolor='white')
         
-        # Generar imagen (Aquí es donde ocurría el ValueError)
+        # Generar imagen (Aquí es donde ocurría el ValueError, protegido por try)
         img_bytes = fig.to_image(format="png", engine="kaleido")
         doc.add_picture(io.BytesIO(img_bytes), width=Inches(6.2))
         doc.add_paragraph("Figura 1: Representación de puntuaciones T.").alignment = WD_ALIGN_PARAGRAPH.CENTER
     except Exception as e:
         # Fallback si Kaleido falla: Se genera una tabla detallada de reemplazo
-        doc.add_paragraph("[NOTA TÉCNICA: Gráfico generado en tabla debido a restricciones del motor de imagen]")
+        doc.add_paragraph("[NOTA TÉCNICA: Gráfico no exportado por restricciones del servidor. Ver tabla sustituta a continuación:]")
         table_fall = doc.add_table(rows=2, cols=len(df_res))
         table_fall.style = 'Table Grid'
         for idx, row_f in df_res.iterrows():
