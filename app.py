@@ -13,7 +13,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 # =====================================================================
 # 🎨 1. ESTÉTICA INSTITUCIONAL TEA (CSS PREMIUM POLICIAL)
 # =====================================================================
-st.set_page_config(page_title="MMPI-2 TEA Suite Pro v14.0", layout="wide", page_icon="🛡️")
+st.set_page_config(page_title="MMPI-2 TEA Suite Pro v14.1", layout="wide", page_icon="🛡️")
 
 def aplicar_interfaz_tea_premium():
     st.markdown("""
@@ -105,7 +105,7 @@ def obtener_puntuacion_t_real(escala, pd, sexo):
     return int(round(max(30, min(120, base_t))))
 
 # =====================================================================
-# 🧠 4. MOTOR DIAGNÓSTICO IA (NUEVO: DIAGNÓSTICO GENERAL NARRATIVO)
+# 🧠 4. MOTOR DIAGNÓSTICO IA (DIAGNÓSTICO GENERAL NARRATIVO)
 # =====================================================================
 class MotorDiagnosticoIA:
     @staticmethod
@@ -129,7 +129,6 @@ class MotorDiagnosticoIA:
     @staticmethod
     def generar_diagnostico_general(df_perfil, paciente):
         """La IA analiza todo el conjunto de datos y redacta un ensayo clínico policial"""
-        # Extraer puntuaciones clave
         t_L = df_perfil[df_perfil['Escala'] == 'L (Mentira)']['T'].values[0]
         t_F = df_perfil[df_perfil['Escala'] == 'F (Incoherencia)']['T'].values[0]
         t_K = df_perfil[df_perfil['Escala'] == 'K (Defensividad)']['T'].values[0]
@@ -176,11 +175,9 @@ def crear_grafico_estilo_tea(df, titulo):
     
     etiquetas = [esc.split(" ")[0] for esc in df["Escala"]]
     
-    # Línea principal del perfil
     ax.plot(etiquetas, df["T"], marker='o', markerfacecolor='white', markeredgewidth=2, 
             markeredgecolor='#003a70', color='#003a70', linewidth=2.5, markersize=8)
     
-    # Línea roja de corte
     ax.axhline(65, color='#c1121f', linestyle='--', linewidth=2, label="Corte Clínico (T=65)")
     
     ax.set_ylim(30, 120)
@@ -189,13 +186,12 @@ def crear_grafico_estilo_tea(df, titulo):
     ax.grid(True, axis='y', linestyle='-', color='#cbd5e1', alpha=0.5)
     ax.legend(loc="upper right", framealpha=1)
     
-    # Eliminar bordes superior y derecho para mayor limpieza visual
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
     
     plt.tight_layout()
     img_buf = io.BytesIO()
-    plt.savefig(img_buf, format='png', dpi=200) # Alta resolución para el Word
+    plt.savefig(img_buf, format='png', dpi=200) 
     img_buf.seek(0)
     plt.close(fig)
     return img_buf
@@ -206,7 +202,6 @@ def crear_grafico_estilo_tea(df, titulo):
 def generar_word_pericial(p, df_resp, df_perfil):
     doc = Document()
     
-    # Estilos Base
     style = doc.styles['Normal']
     style.font.name = 'Arial'
     style.font.size = Pt(11)
@@ -228,7 +223,7 @@ def generar_word_pericial(p, df_resp, df_perfil):
         tabla_id.rows[i].cells[0].text = f"{data_id[i*2][0]}: {data_id[i*2][1]}"
         tabla_id.rows[i].cells[1].text = f"{data_id[i*2+1][0]}: {data_id[i*2+1][1]}"
 
-    # --- 2. DIAGNÓSTICO GENERAL IA (NUEVO) ---
+    # --- 2. DIAGNÓSTICO GENERAL IA ---
     doc.add_page_break()
     doc.add_heading('2. DIAGNÓSTICO GENERAL E IDONEIDAD', level=1)
     
@@ -325,9 +320,9 @@ elif modulo == "📸 Escáner Óptico (OMR)":
         with c2:
             if st.button("🚀 INICIAR LECTURA DE MARCAS"):
                 barra = st.progress(0, text="Calibrando imagen...")
-                for p in range(100):
+                for pt in range(100):
                     time.sleep(0.015)
-                    barra.progress(p + 1, text=f"Procesando ítem {int((p/100)*567)}/567...")
+                    barra.progress(pt + 1, text=f"Procesando ítem {int((pt/100)*567)}/567...")
                 for i in range(TOTAL_ITEMS): st.session_state.data.at[i, "Respuesta"] = "V" if np.random.rand() > 0.5 else "F"
                 st.success("✅ Extracción finalizada con éxito.")
                 st.balloons()
@@ -350,8 +345,8 @@ elif modulo == "📊 Motor Diagnóstico IA":
     texto_ia = MotorDiagnosticoIA.generar_diagnostico_general(df_perfil, st.session_state.paciente)
     st.markdown(f"<div class='diag-box'><strong>🤖 Análisis Pericial IA:</strong><br><br>{texto_ia.replace(chr(10), '<br>')}</div>", unsafe_allow_html=True)
 
-    # 3. MOSTRAR GRÁFICOS TEA
-    st.pyplot(crear_grafico_estilo_tea(df_perfil.iloc[3:], "Perfil Clínico").getfigure(), clear_figure=False)
+    # 3. MOSTRAR GRÁFICOS TEA (SOLUCIÓN AL ERROR st.image en lugar de st.pyplot)
+    st.image(crear_grafico_estilo_tea(df_perfil.iloc[3:], "Perfil Clínico"), use_container_width=True)
     st.dataframe(df_perfil[["Escala", "PD", "T", "Nivel"]], use_container_width=True)
 
 elif modulo == "📄 Generar Reporte Word":
