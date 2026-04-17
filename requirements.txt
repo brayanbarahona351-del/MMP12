@@ -1,6 +1,7 @@
 streamlit
 pandas
 plotly
-matplotlib
+kaleido==0.1.0post1
 python-docx
-Pillow
+pillow
+numpy
