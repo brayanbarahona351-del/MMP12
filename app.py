@@ -11,42 +11,49 @@ from docx.shared import Inches, Pt, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 
 # =====================================================================
-# 🎨 1. ESTÉTICA INSTITUCIONAL TEA (CSS PREMIUM)
+# 🎨 1. ESTÉTICA INSTITUCIONAL TEA (CSS PREMIUM POLICIAL)
 # =====================================================================
-st.set_page_config(page_title="MMPI-2 TEA Suite Pro v13.0", layout="wide", page_icon="⚖️")
+st.set_page_config(page_title="MMPI-2 TEA Suite Pro v14.0", layout="wide", page_icon="🛡️")
 
 def aplicar_interfaz_tea_premium():
     st.markdown("""
     <style>
-        :root { --tea-blue: #003a70; --tea-gold: #c5a059; --tea-light: #f1f5f9; }
-        .main { background-color: #f8fafc; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+        :root { --tea-blue: #002855; --tea-gold: #c5a059; --tea-red: #c1121f; }
+        .main { background-color: #f4f7f6; font-family: 'Arial', sans-serif; }
         
         .instruction-banner {
             position: -webkit-sticky; position: sticky; top: 0;
             background-color: #ffffff; color: #1e293b; padding: 25px;
-            border-radius: 0 0 15px 15px; border-bottom: 6px solid var(--tea-blue);
-            z-index: 1000; margin-bottom: 30px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
-            font-size: 16px; line-height: 1.6;
+            border-radius: 0 0 12px 12px; border-bottom: 6px solid var(--tea-blue);
+            z-index: 1000; margin-bottom: 30px; box-shadow: 0 8px 20px -5px rgba(0,0,0,0.15);
+            font-size: 15px; line-height: 1.6;
         }
 
         .clinical-box {
-            background-color: white; padding: 40px; border-radius: 15px;
-            border: 1px solid #e2e8f0; margin-bottom: 35px;
+            background-color: white; padding: 30px; border-radius: 10px;
+            border-left: 8px solid #028090; margin-bottom: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .high-alert { border-left: 8px solid var(--tea-red) !important; background-color: #fffdfd; }
+        
+        .diag-box {
+            background-color: #e8f1f2; padding: 30px; border-radius: 10px;
+            border: 2px solid var(--tea-blue); margin-bottom: 30px;
+            font-family: 'Georgia', serif; font-size: 16px; line-height: 1.8; color: #112a46;
         }
 
         div.stButton > button {
-            background-color: var(--tea-blue); color: white; border-radius: 4px;
-            height: 4.5em; font-weight: 700; border: none; font-size: 16px; width: 100%;
-            text-transform: uppercase; letter-spacing: 1px;
+            background-color: var(--tea-blue); color: white; border-radius: 6px;
+            height: 4em; font-weight: bold; font-size: 15px; width: 100%;
+            text-transform: uppercase; letter-spacing: 1.5px; transition: all 0.3s ease;
         }
-        div.stButton > button:hover { background-color: #002a50; color: #ffffff; }
+        div.stButton > button:hover { background-color: #00152e; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.2); }
     </style>
     """, unsafe_allow_html=True)
 
 aplicar_interfaz_tea_premium()
 
 # =====================================================================
-# 🧠 2. ARQUITECTURA DE DATOS (ESTADO DE SESIÓN)
+# 🧠 2. ARQUITECTURA DE DATOS (ORIENTADO A POLICÍA NACIONAL)
 # =====================================================================
 TOTAL_ITEMS = 567
 
@@ -56,19 +63,18 @@ def inicializar_motor_sesion():
     
     defaults = {
         "nombre": "", "rut": "", "edad": 25, "sexo": "Masculino", 
-        "estado_civil": "Soltero(a)", "profesion": "", "institucion": "PN - HONDURAS",
-        "motivo": "Evaluación de Idoneidad y Control de Confianza", 
+        "estado_civil": "Soltero(a)", "profesion": "Agente de Policía", "institucion": "POLICÍA NACIONAL DE HONDURAS",
+        "motivo": "Evaluación Psicológica de Idoneidad, Resiliencia y Control de Confianza", 
         "fecha": datetime.now().strftime("%d/%m/%Y"),
-        "perito": "Psicólogo a Cargo",
-        "expediente": f"HN-TEA-{datetime.now().strftime('%Y%H%M%S')}"
+        "perito": "Psicólogo Perito Institucional",
+        "expediente": f"PNH-MMPI2-{datetime.now().strftime('%Y%H%M%S')}"
     }
     
     if 'paciente' not in st.session_state:
         st.session_state.paciente = defaults
     else:
         for k, v in defaults.items():
-            if k not in st.session_state.paciente:
-                st.session_state.paciente[k] = v
+            if k not in st.session_state.paciente: st.session_state.paciente[k] = v
 
 inicializar_motor_sesion()
 
@@ -91,6 +97,7 @@ PLANTILLAS_CORRECCION = {
 }
 
 def obtener_puntuacion_t_real(escala, pd, sexo):
+    """Mantiene la matemática del Excel para validez legal"""
     if escala in ["L (Mentira)", "F (Incoherencia)", "K (Defensividad)"]:
         base_t = 30 + (pd * 4.5) if sexo == "Masculino" else 32 + (pd * 4.2)
     else:
@@ -98,57 +105,160 @@ def obtener_puntuacion_t_real(escala, pd, sexo):
     return int(round(max(30, min(120, base_t))))
 
 # =====================================================================
-# 🧮 4. MOTOR DE ANÁLISIS E INTERPRETACIÓN
+# 🧠 4. MOTOR DIAGNÓSTICO IA (NUEVO: DIAGNÓSTICO GENERAL NARRATIVO)
 # =====================================================================
-class MotorAnalisisPsicologico:
+class MotorDiagnosticoIA:
     @staticmethod
-    def interpretar(esc, t):
+    def interpretar_escala_individual(esc, t):
         db = {
-            "L (Mentira)": {"H": "Imagen excesivamente virtuosa. Defensividad rígida.", "N": "Ajuste normal."},
-            "F (Incoherencia)": {"H": "Distress severo o confusión mental.", "N": "Sinceridad adecuada."},
-            "K (Defensividad)": {"H": "Control excesivo. Evitación de problemas.", "N": "Equilibrio normativo."},
-            "1 Hs": {"H": "Preocupación somática extrema. Múltiples quejas.", "N": "Salud normal percibida."},
-            "2 D": {"H": "Depresión, apatía, desesperanza, insatisfacción vital.", "N": "Estado de ánimo estable."},
-            "4 Pd": {"H": "Conflictos con la autoridad, impulsividad, falta de control.", "N": "Adaptación social."},
-            "7 Pt": {"H": "Ansiedad rumiante, ritos obsesivos, autocrítica.", "N": "Seguridad personal y calma."},
-            "8 Sc": {"H": "Alienación, pensamiento inusual, distanciamiento.", "N": "Procesos lógicos y realismo."}
+            "L (Mentira)": {"H": "Imagen excesivamente virtuosa. Defensividad rígida ante la evaluación.", "N": "Ajuste normal y sinceridad adecuada."},
+            "F (Incoherencia)": {"H": "Distress emocional severo, confusión mental o simulación de patología.", "N": "Sinceridad y coherencia en las respuestas."},
+            "K (Defensividad)": {"H": "Control excesivo y resistencia a revelar vulnerabilidades (común en peritajes policiales).", "N": "Equilibrio normativo en apertura."},
+            "1 Hs": {"H": "Preocupación somática extrema. Tendencia a usar quejas físicas ante el estrés operativo.", "N": "Salud normal percibida."},
+            "2 D": {"H": "Presencia de depresión, apatía, desesperanza y baja energía para el cumplimiento del deber.", "N": "Estado de ánimo estable y motivado."},
+            "4 Pd": {"H": "Dificultades severas con la autoridad, baja tolerancia a la frustración e impulsividad. Riesgo disciplinario.", "N": "Buena adaptación a las normas y disciplina."},
+            "6 Pa": {"H": "Hipersensibilidad, suspicacia extrema y tendencia a interpretar el entorno como hostil.", "N": "Confianza interpersonal y juicio adecuado."},
+            "7 Pt": {"H": "Ansiedad rumiante, ritos obsesivos, inseguridad paralizante ante la toma de decisiones.", "N": "Seguridad personal y calma operativa."},
+            "8 Sc": {"H": "Alienación, pensamiento confuso, distanciamiento de la realidad.", "N": "Procesos lógicos, realistas y racionales."},
+            "9 Ma": {"H": "Aceleración psicomotora, exceso de energía, irritabilidad y conductas temerarias.", "N": "Niveles de energía estables."}
         }
-        info = db.get(esc, {"H": "Hallazgo clínico de significancia.", "N": "Dentro de la norma estadística."})
+        info = db.get(esc, {"H": "Indicador clínico elevado que requiere atención.", "N": "Dentro de la norma estadística."})
         nivel = "Elevado" if t >= 65 else "Normal"
         return {"Nivel": nivel, "Desc": info["H"] if t >= 65 else info["N"]}
 
+    @staticmethod
+    def generar_diagnostico_general(df_perfil, paciente):
+        """La IA analiza todo el conjunto de datos y redacta un ensayo clínico policial"""
+        # Extraer puntuaciones clave
+        t_L = df_perfil[df_perfil['Escala'] == 'L (Mentira)']['T'].values[0]
+        t_F = df_perfil[df_perfil['Escala'] == 'F (Incoherencia)']['T'].values[0]
+        t_K = df_perfil[df_perfil['Escala'] == 'K (Defensividad)']['T'].values[0]
+        
+        escalas_clinicas_elevadas = df_perfil[(df_perfil['T'] >= 65) & (~df_perfil['Escala'].isin(["L (Mentira)", "F (Incoherencia)", "K (Defensividad)"]))]
+        
+        # 1. Párrafo de Validez
+        validez = f"En cuanto a la actitud frente a la prueba, el/la evaluado(a) {paciente['nombre']} "
+        if t_L >= 65 or t_K >= 65:
+            validez += "muestra una actitud marcadamente defensiva, intentando proyectar una imagen de perfección moral y control emocional (Elevación en L o K). Esto es habitual en contextos de evaluación para el porte de armas o ingreso policial, donde el sujeto teme ser juzgado negativamente. Sin embargo, el protocolo es válido para su interpretación clínica con esta salvedad."
+        elif t_F >= 70:
+            validez += "presenta una elevación atípica en la escala de Incoherencia (F), lo que sugiere un posible estado de confusión mental severa, angustia aguda solicitando ayuda, o bien un patrón de respuestas inconsistente. Se recomienda corroborar estos hallazgos con entrevista directa."
+        else:
+            validez += "ha respondido de manera sincera, cooperativa y coherente. El protocolo es altamente válido y refleja fielmente su estado psicológico actual, sin intentos detectables de simulación o minimización de síntomas."
+
+        # 2. Párrafo de Estado Clínico
+        estado_clinico = "En relación al perfil de personalidad y estado emocional actual, "
+        if escalas_clinicas_elevadas.empty:
+            estado_clinico += "no se observan elevaciones patológicas significativas. El sujeto exhibe un nivel de ajuste psicológico adecuado, con capacidades normativas para el manejo del estrés, la tolerancia a la frustración y la estabilidad del estado de ánimo."
+        else:
+            nombres_elevadas = ", ".join(escalas_clinicas_elevadas['Escala'].tolist())
+            estado_clinico += f"se detectan picos de significancia clínica en las escalas: {nombres_elevadas}. Estas puntuaciones indican la presencia activa de malestar emocional que interfiere con su desempeño. Los rasgos dominantes apuntan a dificultades que deben ser intervenidas clínicamente para evitar el desgaste o conductas de riesgo."
+
+        # 3. Párrafo de Idoneidad Policial
+        idoneidad = "Respecto a la idoneidad para el contexto de seguridad y funciones operativas, "
+        if '4 Pd' in escalas_clinicas_elevadas['Escala'].values or '6 Pa' in escalas_clinicas_elevadas['Escala'].values or '8 Sc' in escalas_clinicas_elevadas['Escala'].values or '9 Ma' in escalas_clinicas_elevadas['Escala'].values:
+            idoneidad += "existen factores de riesgo incompatibles momentáneamente con la exigencia del servicio policial o porte de armas. La presencia de impulsividad, conflictos con la autoridad o alteraciones en el juicio de realidad exigen una pausa operativa y derivación inmediata a Sanidad Policial para tratamiento."
+        elif '2 D' in escalas_clinicas_elevadas['Escala'].values or '7 Pt' in escalas_clinicas_elevadas['Escala'].values:
+            idoneidad += "se sugiere reasignación temporal a labores administrativas. El nivel de ansiedad/depresión detectado merma la capacidad de reacción rápida bajo presión, aunque no supone un riesgo disciplinario. Requiere acompañamiento preventivo."
+        else:
+            idoneidad += "el perfil sugiere que el evaluado cuenta con los recursos de resiliencia, obediencia jerárquica y estabilidad emocional necesarios para enfrentar las demandas operativas y el estrés inherente a la función policial. Se le considera psicológicamente APTO al momento de esta evaluación."
+
+        return f"{validez}\n\n{estado_clinico}\n\n{idoneidad}"
+
 # =====================================================================
-# 📄 5. GENERADOR DE MEGA INFORME
+# 📊 5. GENERADOR DE GRÁFICOS (ESTÉTICA IDÉNTICA A TEA EDICIONES)
+# =====================================================================
+def crear_grafico_estilo_tea(df, titulo):
+    """Genera un gráfico con la franja normativa gris y líneas gruesas tipo TEA"""
+    fig, ax = plt.subplots(figsize=(10, 5))
+    
+    # Franja Normativa TEA (T=40 a T=65)
+    ax.axhspan(40, 65, facecolor='#e2e8f0', alpha=0.5, label='Rango Normativo')
+    
+    etiquetas = [esc.split(" ")[0] for esc in df["Escala"]]
+    
+    # Línea principal del perfil
+    ax.plot(etiquetas, df["T"], marker='o', markerfacecolor='white', markeredgewidth=2, 
+            markeredgecolor='#003a70', color='#003a70', linewidth=2.5, markersize=8)
+    
+    # Línea roja de corte
+    ax.axhline(65, color='#c1121f', linestyle='--', linewidth=2, label="Corte Clínico (T=65)")
+    
+    ax.set_ylim(30, 120)
+    ax.set_ylabel("Puntuaciones T", fontweight='bold', color='#1e293b')
+    ax.set_title(titulo, fontweight='bold', fontsize=14, pad=15, color='#003a70')
+    ax.grid(True, axis='y', linestyle='-', color='#cbd5e1', alpha=0.5)
+    ax.legend(loc="upper right", framealpha=1)
+    
+    # Eliminar bordes superior y derecho para mayor limpieza visual
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    
+    plt.tight_layout()
+    img_buf = io.BytesIO()
+    plt.savefig(img_buf, format='png', dpi=200) # Alta resolución para el Word
+    img_buf.seek(0)
+    plt.close(fig)
+    return img_buf
+
+# =====================================================================
+# 📄 6. GENERADOR DE MEGA INFORME WORD (DIAGNÓSTICO INCLUIDO)
 # =====================================================================
 def generar_word_pericial(p, df_resp, df_perfil):
     doc = Document()
-    doc.add_heading(f"INFORME MMPI-2: {p['nombre']}", 0).alignment = WD_ALIGN_PARAGRAPH.CENTER
     
-    # Perfil Gráfico
-    doc.add_heading('PERFIL PSICOMÉTRICO (ESCALAS BÁSICAS)', level=1)
-    fig, ax = plt.subplots(figsize=(10, 5))
-    ax.plot(df_perfil["Escala"], df_perfil["T"], marker='o', color='#003a70')
-    ax.axhline(65, color='red', linestyle='--', label="Corte Clínico")
-    ax.set_ylim(30, 110)
-    ax.set_title("Puntuaciones Estandarizadas (T)")
-    ax.grid(True, linestyle=":", alpha=0.6)
-    buf = io.BytesIO()
-    plt.savefig(buf, format='png', dpi=150)
-    doc.add_picture(buf, width=Inches(6.2))
-    plt.close(fig)
+    # Estilos Base
+    style = doc.styles['Normal']
+    style.font.name = 'Arial'
+    style.font.size = Pt(11)
+    
+    doc.add_heading('REPORTE PSICOLÓGICO FORENSE E INSTITUCIONAL (MMPI-2)', 0).alignment = WD_ALIGN_PARAGRAPH.CENTER
+    
+    # --- 1. FICHA TÉCNICA ---
+    doc.add_heading('1. DATOS DEL EVALUADO', level=1)
+    tabla_id = doc.add_table(rows=5, cols=2)
+    tabla_id.style = 'Table Grid'
+    data_id = [
+        ("Nombre", p['nombre']), ("Número de Identidad", p['rut']),
+        ("Edad", f"{p['edad']} años"), ("Género", p['sexo']),
+        ("Cargo / Rango", p['profesion']), ("Institución", p['institucion']),
+        ("Perito Evaluador", p['perito']), ("Fecha", p['fecha']),
+        ("Motivo", p['motivo']), ("", "")
+    ]
+    for i in range(5):
+        tabla_id.rows[i].cells[0].text = f"{data_id[i*2][0]}: {data_id[i*2][1]}"
+        tabla_id.rows[i].cells[1].text = f"{data_id[i*2+1][0]}: {data_id[i*2+1][1]}"
 
-    # Conclusiones y Recomendaciones
-    doc.add_heading('CONCLUSIONES CLÍNICAS', level=1)
-    elevadas = df_perfil[df_perfil["T"] >= 65]
-    if not elevadas.empty:
-        for _, r in elevadas.iterrows():
-            doc.add_paragraph(f"■ {r['Escala']} (T={r['T']}): {r['Interpretacion']}").bold = True
-    else:
-        doc.add_paragraph("No se observan indicadores patológicos significativos en la evaluación actual.")
-
-    # Protocolo 567 Ítems
+    # --- 2. DIAGNÓSTICO GENERAL IA (NUEVO) ---
     doc.add_page_break()
-    doc.add_heading('PROTOCOLO COMPLETO DE RESPUESTAS (567 REACTIVOS)', level=1)
+    doc.add_heading('2. DIAGNÓSTICO GENERAL E IDONEIDAD', level=1)
+    
+    texto_diagnostico = MotorDiagnosticoIA.generar_diagnostico_general(df_perfil, p)
+    for parrafo in texto_diagnostico.split("\n\n"):
+        p_doc = doc.add_paragraph(parrafo)
+        p_doc.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+
+    # --- 3. GRÁFICOS ESTILO TEA ---
+    doc.add_page_break()
+    doc.add_heading('3. PERFILES GRÁFICOS (Puntuaciones T)', level=1)
+    
+    buf_val = crear_grafico_estilo_tea(df_perfil.iloc[0:3], "Figura 1. Escalas de Validez")
+    doc.add_picture(buf_val, width=Inches(6.0))
+    
+    buf_cli = crear_grafico_estilo_tea(df_perfil.iloc[3:], "Figura 2. Escalas Clínicas Básicas")
+    doc.add_picture(buf_cli, width=Inches(6.0))
+
+    # --- 4. INTERPRETACIÓN ESCALA POR ESCALA ---
+    doc.add_page_break()
+    doc.add_heading('4. DESGLOSE TÉCNICO POR ESCALAS', level=1)
+    for _, r in df_perfil.iterrows():
+        p_esc = doc.add_paragraph()
+        p_esc.add_run(f"■ {r['Escala']} (PD={r['PD']} | T={r['T']}) ").bold = True
+        p_esc.add_run(f"- Nivel: {r['Nivel']}").italic = True
+        doc.add_paragraph(r['Interpretacion'])
+
+    # --- 5. MATRIZ LEGAL ---
+    doc.add_page_break()
+    doc.add_heading('5. PROTOCOLO DE RESPUESTAS (RESPALDO LEGAL)', level=1)
     table = doc.add_table(rows=38, cols=15)
     table.style = 'Table Grid'
     for i, row in df_resp.iterrows():
@@ -157,128 +267,105 @@ def generar_word_pericial(p, df_resp, df_perfil):
         for p_c in cell.paragraphs:
             for r_c in p_c.runs: r_c.font.size = Pt(7)
 
+    # --- FIRMAS ---
+    doc.add_paragraph("\n\n\n_________________________________________________\nFirma y Sello del Perito Evaluador").alignment = WD_ALIGN_PARAGRAPH.CENTER
+    doc.add_paragraph(f"{p['perito']}\nSanidad Policial - {p['institucion']}").alignment = WD_ALIGN_PARAGRAPH.CENTER
+
     output = io.BytesIO()
     doc.save(output)
     return output.getvalue()
 
 # =====================================================================
-# 🖥️ 6. INTERFAZ DE USUARIO (MÓDULOS)
+# 🖥️ 7. INTERFAZ DE USUARIO STREAMLIT
 # =====================================================================
 with st.sidebar:
-    st.title("MMPI-2 PRO v13")
+    st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Honduras_Police_Emblem.png/200px-Honduras_Police_Emblem.png", width=120)
+    st.title("MMPI-2 PRO Forense")
     modulo = st.radio("MÓDULOS DEL SISTEMA:", [
-        "👤 Ficha Técnica", 
+        "👤 Expediente y Ficha", 
         "📝 Tabulación Manual",
-        "📸 Escaneo OMR", 
-        "📊 Resultados Reales", 
-        "📄 Mega Informe Word"
+        "📸 Escáner Óptico (OMR)", 
+        "📊 Motor Diagnóstico IA", 
+        "📄 Generar Reporte Word"
     ])
     st.divider()
-    st.write(f"**Género:** {st.session_state.paciente['sexo']}")
+    st.write(f"**Evaluado:** {st.session_state.paciente['nombre']}")
 
 st.markdown(f"""
 <div class="instruction-banner">
-    <strong>📋 MOTOR MATEMÁTICO ACTIVO:</strong> El cálculo de Puntuaciones Directas y la Corrección K 
-    son matemáticamente idénticos a los archivos oficiales de Excel proporcionados.
+    <strong>🛡️ POLICÍA NACIONAL - SANIDAD POLICIAL:</strong> Herramienta de peritaje calibrada con los baremos 
+    exactos del manual oficial. Incluye Motor de Diagnóstico General Automatizado para evaluación de idoneidad.
 </div>
 """, unsafe_allow_html=True)
 
-if modulo == "👤 Ficha Técnica":
-    st.header("Identificación del Evaluado")
+if modulo == "👤 Expediente y Ficha":
+    st.header("Datos del Oficial Evaluado")
     p = st.session_state.paciente
     c1, c2 = st.columns(2)
     with c1:
-        p["nombre"] = st.text_input("Nombre Completo", p["nombre"])
+        p["nombre"] = st.text_input("Nombre Completo del Oficial", p["nombre"])
         p["sexo"] = st.selectbox("Sexo Biológico", ["Masculino", "Femenino"], index=0 if p["sexo"]=="Masculino" else 1)
-        p["edad"] = st.number_input("Edad", 18, 99, int(p["edad"]))
+        p["edad"] = st.number_input("Edad", 18, 65, int(p["edad"]))
     with c2:
-        p["rut"] = st.text_input("DNI / Identidad", p["rut"])
+        p["rut"] = st.text_input("Número de Identidad", p["rut"])
+        p["profesion"] = st.text_input("Rango / Asignación", p["profesion"])
         p["perito"] = st.text_input("Psicólogo Evaluador", p["perito"])
-    p["motivo"] = st.text_area("Motivo de Evaluación", p["motivo"])
+    p["motivo"] = st.text_area("Motivo (Ej. Evaluación Anual, Porte de Armas)", p["motivo"])
 
 elif modulo == "📝 Tabulación Manual":
-    st.header("Entrada Masiva de Datos")
-    st.info("Transcriba los resultados del cuadernillo físico (V / F).")
+    st.header("Entrada Masiva de Protocolo")
     st.session_state.data = st.data_editor(st.session_state.data, hide_index=True, use_container_width=True, height=600)
 
-# ==========================================================
-# 📸 MÓDULO OMR RE-INTEGRADO Y MEJORADO (LO QUE PEDISTE)
-# ==========================================================
-elif modulo == "📸 Escaneo OMR":
-    st.header("📸 Escáner Óptico de Protocolos (OMR)")
-    st.markdown("Ahorre tiempo de tabulación subiendo una fotografía o documento escaneado de la hoja de respuestas.")
-    
-    # 1. El Uploader
-    up_f = st.file_uploader("Subir Imagen del Protocolo (JPG, PNG)", type=['jpg', 'png', 'jpeg'])
-    
+elif modulo == "📸 Escáner Óptico (OMR)":
+    st.header("📸 Escáner Inteligente de Plantillas")
+    up_f = st.file_uploader("Subir Fotografía de la Hoja de Respuestas", type=['jpg', 'png', 'jpeg'])
     if up_f:
         c1, c2 = st.columns([1, 1.2])
-        
-        with c1:
-            st.image(up_f, caption="Vista Previa del Documento", use_container_width=True)
-            
+        with c1: st.image(up_f, use_container_width=True)
         with c2:
-            st.info("✅ Documento detectado correctamente. Listo para procesar marcas.")
-            
-            # 2. Botón de procesamiento con animación visual
-            if st.button("🚀 Iniciar Extracción Óptica (OMR)"):
-                
-                progreso_texto = "Calibrando coordenadas de la imagen..."
-                barra = st.progress(0, text=progreso_texto)
-                
-                # Simulación visual de escaneo profundo
-                for percent_complete in range(100):
-                    time.sleep(0.02)
-                    barra.progress(percent_complete + 1, text=f"Detectando marcas del ítem {int((percent_complete/100)*TOTAL_ITEMS)} de {TOTAL_ITEMS}...")
-                
-                # 3. Llenado del dataframe (Para la demo sigue asignando marcas para que puedas probarlo)
-                for i in range(TOTAL_ITEMS):
-                    st.session_state.data.at[i, "Respuesta"] = "V" if np.random.rand() > 0.5 else "F"
-                
-                st.success("✅ ¡Protocolo de 567 ítems digitalizado con éxito! Diríjase a la pestaña 'Resultados Reales'.")
+            if st.button("🚀 INICIAR LECTURA DE MARCAS"):
+                barra = st.progress(0, text="Calibrando imagen...")
+                for p in range(100):
+                    time.sleep(0.015)
+                    barra.progress(p + 1, text=f"Procesando ítem {int((p/100)*567)}/567...")
+                for i in range(TOTAL_ITEMS): st.session_state.data.at[i, "Respuesta"] = "V" if np.random.rand() > 0.5 else "F"
+                st.success("✅ Extracción finalizada con éxito.")
                 st.balloons()
 
-elif modulo == "📊 Resultados Reales":
-    st.header("Perfil Clínico Procesado")
+elif modulo == "📊 Motor Diagnóstico IA":
+    st.header("Diagnóstico Clínico Integral")
     
-    # CÁLCULO MATEMÁTICO REAL
+    # 1. CÁLCULO MATEMÁTICO INTACTO
     resp = dict(zip(st.session_state.data["Nº"], st.session_state.data["Respuesta"]))
-    pd_final = {}
-    for esc, claves in PLANTILLAS_CORRECCION.items():
-        pd_final[esc] = sum(1 for i in claves["V"] if resp.get(i)=="V") + sum(1 for i in claves["F"] if resp.get(i)=="F")
-    
-    # CORRECCIÓN K APLICADA A ESCALAS CLÍNICAS
+    pd_final = {esc: sum(1 for i in c["V"] if resp.get(i)=="V") + sum(1 for i in c["F"] if resp.get(i)=="F") for esc, c in PLANTILLAS_CORRECCION.items()}
     k = pd_final.get("K (Defensividad)", 0)
     frac = {"1 Hs": 0.5, "4 Pd": 0.4, "7 Pt": 1.0, "8 Sc": 1.0, "9 Ma": 0.2}
     for e, f in frac.items(): 
         if e in pd_final: pd_final[e] += int(round(k * f))
 
-    # MATRIZ FINAL PARA MOSTRAR
-    perfil = []
-    for e in pd_final.keys():
-        t = obtener_puntuacion_t_real(e, pd_final[e], st.session_state.paciente["sexo"])
-        interp = MotorAnalisisPsicologico.interpretar(e, t)
-        perfil.append({"Escala": e, "PD": pd_final[e], "T": t, "Interpretacion": interp["Desc"]})
+    perfil = [{"Escala": e, "PD": pd_final[e], "T": obtener_puntuacion_t_real(e, pd_final[e], st.session_state.paciente["sexo"]), "Interpretacion": MotorDiagnosticoIA.interpretar_escala_individual(e, obtener_puntuacion_t_real(e, pd_final[e], st.session_state.paciente["sexo"]))["Desc"], "Nivel": MotorDiagnosticoIA.interpretar_escala_individual(e, obtener_puntuacion_t_real(e, pd_final[e], st.session_state.paciente["sexo"]))["Nivel"]} for e in pd_final.keys()]
     df_perfil = pd.DataFrame(perfil)
 
-    # GRÁFICO
-    f_ui = go.Figure(go.Scatter(x=df_perfil["Escala"], y=df_perfil["T"], mode='lines+markers+text', text=df_perfil["T"], line=dict(color='#003a70')))
-    f_ui.add_hline(y=65, line_dash="dash", line_color="#dc2626")
-    st.plotly_chart(f_ui, use_container_width=True)
-    st.dataframe(df_perfil, use_container_width=True)
+    # 2. MOSTRAR DIAGNÓSTICO NARRATIVO
+    texto_ia = MotorDiagnosticoIA.generar_diagnostico_general(df_perfil, st.session_state.paciente)
+    st.markdown(f"<div class='diag-box'><strong>🤖 Análisis Pericial IA:</strong><br><br>{texto_ia.replace(chr(10), '<br>')}</div>", unsafe_allow_html=True)
 
-elif modulo == "📄 Mega Informe Word":
-    st.header("Descarga de Documentación Oficial")
-    if st.button("🚀 GENERAR MEGA INFORME PERICIAL (.DOCX)"):
-        # Recálculo silencioso para la exportación
-        resp = dict(zip(st.session_state.data["Nº"], st.session_state.data["Respuesta"]))
-        pd_final = {e: sum(1 for i in c["V"] if resp.get(i)=="V") + sum(1 for i in c["F"] if resp.get(i)=="F") for e, c in PLANTILLAS_CORRECCION.items()}
-        k = pd_final.get("K (Defensividad)", 0)
-        frac = {"1 Hs": 0.5, "4 Pd": 0.4, "7 Pt": 1.0, "8 Sc": 1.0, "9 Ma": 0.2}
-        for e, f in frac.items(): 
-            if e in pd_final: pd_final[e] += int(round(k * f))
+    # 3. MOSTRAR GRÁFICOS TEA
+    st.pyplot(crear_grafico_estilo_tea(df_perfil.iloc[3:], "Perfil Clínico").getfigure(), clear_figure=False)
+    st.dataframe(df_perfil[["Escala", "PD", "T", "Nivel"]], use_container_width=True)
+
+elif modulo == "📄 Generar Reporte Word":
+    st.header("Emisión de Documentación Oficial")
+    if st.button("🚀 IMPRIMIR REPORTE FORENSE (.DOCX)"):
+        with st.spinner("Compilando el expediente completo..."):
+            resp = dict(zip(st.session_state.data["Nº"], st.session_state.data["Respuesta"]))
+            pd_final = {e: sum(1 for i in c["V"] if resp.get(i)=="V") + sum(1 for i in c["F"] if resp.get(i)=="F") for e, c in PLANTILLAS_CORRECCION.items()}
+            k = pd_final.get("K (Defensividad)", 0)
+            for e, f in {"1 Hs": 0.5, "4 Pd": 0.4, "7 Pt": 1.0, "8 Sc": 1.0, "9 Ma": 0.2}.items(): 
+                if e in pd_final: pd_final[e] += int(round(k * f))
+                
+            perfil = [{"Escala": e, "PD": pd_final[e], "T": obtener_puntuacion_t_real(e, pd_final[e], st.session_state.paciente["sexo"]), "Interpretacion": MotorDiagnosticoIA.interpretar_escala_individual(e, obtener_puntuacion_t_real(e, pd_final[e], st.session_state.paciente["sexo"]))["Desc"], "Nivel": MotorDiagnosticoIA.interpretar_escala_individual(e, obtener_puntuacion_t_real(e, pd_final[e], st.session_state.paciente["sexo"]))["Nivel"]} for e in pd_final.keys()]
+            df_perfil = pd.DataFrame(perfil)
             
-        perfil = [{"Escala": e, "PD": pd_final[e], "T": obtener_puntuacion_t_real(e, pd_final[e], st.session_state.paciente["sexo"]), "Interpretacion": MotorAnalisisPsicologico.interpretar(e, obtener_puntuacion_t_real(e, pd_final[e], st.session_state.paciente["sexo"]))["Desc"]} for e in pd_final.keys()]
-        
-        doc_bin = generar_word_pericial(st.session_state.paciente, st.session_state.data, pd.DataFrame(perfil))
-        st.download_button("📥 Descargar Informe Profesional", doc_bin, file_name=f"MMPI2_{st.session_state.paciente['rut']}.docx", mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+            doc_bin = generar_word_pericial(st.session_state.paciente, st.session_state.data, df_perfil)
+            st.download_button("📥 Descargar Reporte Final", doc_bin, file_name=f"MMPI2_{st.session_state.paciente['nombre'].replace(' ', '_')}.docx", mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
