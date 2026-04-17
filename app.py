@@ -114,7 +114,7 @@ inicializar_motor_sesion()
 # =====================================================================
 # ⚙️ 3. MOTOR MATEMÁTICO INTACTO (VERACIDAD LEGAL EXCEL)
 # =====================================================================
-# LÓGICA DE CORRECCIÓN EXACTA DE TUS ARCHIVOS EXCEL
+# LÓGICA DE CORRECCIÓN EXACTA DE TUS ARCHIVOS EXCEL (Varones y Mujeres)
 PLANTILLAS_CORRECCION = {
     "L (Mentira)": {"V": [], "F": [16, 29, 41, 51, 77, 93, 102, 107, 123, 139, 153, 190, 203, 232, 260]},
     "F (Incoherencia)": {"V": [17, 31, 32, 40, 42, 50, 56, 65, 73, 85, 114, 144, 166, 177, 191, 200, 202, 213, 225, 252, 256, 269, 275, 276, 281, 282, 287, 292, 311, 316, 319, 323, 335, 344, 345, 347, 349, 350, 353, 356, 361, 369, 381, 385, 395, 398, 404, 406, 413, 416, 426, 427, 431, 452, 461, 469, 480, 500, 506, 545, 551, 560, 561], "F": [3, 39]},
@@ -142,60 +142,65 @@ def obtener_puntuacion_t_real(escala, pd_valor, sexo):
     return int(round(max(30, min(120, base_t))))
 
 # =====================================================================
-# 🧠 4. MOTOR DIAGNÓSTICO IA (CLÍNICO, FORENSE Y NARRATIVO)
+# 🧠 4. MOTOR DIAGNÓSTICO IA CON PERSONALIZACIÓN DE NOMBRE
 # =====================================================================
 class MotorDiagnosticoIntegral:
     @staticmethod
     def obtener_diccionario_escalas():
         """Diccionario clínico extenso para análisis individual de cada escala."""
         return {
-            "L (Mentira)": {"Area": "Validez", "H": "El sujeto presenta una rigidez defensiva marcada. Intenta proyectar una imagen de perfección ética, negando fallas humanas menores. Existe un esfuerzo consciente por ocultar vulnerabilidades.", "N": "Sinceridad normativa. El individuo es capaz de reconocer imperfecciones comunes sin alterar su autoimagen."},
-            "F (Incoherencia)": {"Area": "Validez", "H": "Elevación crítica que sugiere distress emocional agudo, desorganización cognitiva o una exageración deliberada de síntomas (grito de ayuda o simulación).", "N": "Respuestas coherentes y consistentes. Adecuada comprensión lectora y apego a la realidad."},
-            "K (Defensividad)": {"Area": "Validez", "H": "Alto grado de control emocional y reserva. Resistencia a la exploración psicológica profunda. Fachada de eficiencia que puede encubrir conflictos internalizados.", "N": "Equilibrio saludable entre la apertura clínica y la autoprotección del ego."},
-            "1 Hs": {"Area": "Clínica", "H": "Tendencia significativa a somatizar el estrés. Quejas físicas múltiples y excesiva preocupación por el funcionamiento corporal como mecanismo de escape.", "N": "Percepción normal del estado de salud físico. Ausencia de indicadores de somatización clínica."},
-            "2 D": {"Area": "Clínica", "H": "Cuadro depresivo activo. Desánimo, desesperanza, apatía motora, insatisfacción vital y falta de energía para afrontar las demandas del entorno.", "N": "Estabilidad del estado de ánimo. Motivación y energía vital preservadas."},
-            "3 Hy": {"Area": "Clínica", "H": "Mecanismos de negación severos. Inmadurez emocional, fuerte necesidad de aprobación externa y posible desarrollo de síntomas físicos bajo presión psicológica.", "N": "Manejo emocional proporcionado. Adaptación sana a las tensiones interpersonales."},
-            "4 Pd": {"Area": "Clínica", "H": "Impulsividad, baja tolerancia a la frustración y dificultades marcadas para internalizar normas sociales. Fricción con figuras de autoridad y externalización de la culpa.", "N": "Control de impulsos adecuado. Respeto por las normativas sociales y buena integración comunitaria."},
-            "6 Pa": {"Area": "Clínica", "H": "Rigidez cognitiva, suspicacia extrema e hipersensibilidad al rechazo. Tendencia a percibir el entorno como hostil, sintiéndose tratado injustamente.", "N": "Confianza interpersonal conservada. Flexibilidad cognitiva y ausencia de ideación paranoide."},
-            "7 Pt": {"Area": "Clínica", "H": "Ansiedad paralizante, perfeccionismo disfuncional, autocrítica severa y patrones rumiantes u obsesivos que merman la capacidad de decisión.", "N": "Niveles de preocupación normativos. Seguridad en sí mismo y ausencia de rituales obsesivos."},
-            "8 Sc": {"Area": "Clínica", "H": "Aislamiento social profundo, pensamiento desorganizado y distanciamiento de la realidad objetiva. Sentimientos de incomprensión y alienación.", "N": "Juicio de realidad intacto. Procesos de pensamiento lógicos y secuenciales."},
-            "9 Ma": {"Area": "Clínica", "H": "Aceleración psicomotriz, irritabilidad y sobreestimación de capacidades. Dificultad para mantener la constancia debido a un exceso de energía dispersa.", "N": "Nivel de activación congruente con las demandas del entorno. Estabilidad conductual."},
-            "0 Si": {"Area": "Clínica", "H": "Evitación social marcada. Timidez paralizante y disconfort agudo en situaciones grupales desestructuradas. Preferencia por el aislamiento.", "N": "Participación social adecuada. Capacidad para interactuar en grupos sin experimentar angustia."}
+            "L (Mentira)": {"Area": "Validez", "H": "Presenta una rigidez defensiva marcada. Intenta proyectar una imagen de perfección ética, negando fallas humanas menores.", "N": "Sinceridad normativa. Es capaz de reconocer imperfecciones comunes sin alterar su autoimagen."},
+            "F (Incoherencia)": {"Area": "Validez", "H": "Elevación crítica que sugiere distress emocional agudo, desorganización cognitiva o una exageración deliberada de síntomas.", "N": "Respuestas coherentes y consistentes. Adecuada comprensión lectora y apego a la realidad."},
+            "K (Defensividad)": {"Area": "Validez", "H": "Alto grado de control emocional y reserva. Resistencia a la exploración psicológica profunda.", "N": "Equilibrio saludable entre la apertura clínica y la autoprotección del ego."},
+            "1 Hs": {"Area": "Clínica", "H": "Tendencia significativa a somatizar el estrés. Quejas físicas múltiples y excesiva preocupación por el funcionamiento corporal.", "N": "Percepción normal del estado de salud físico. Ausencia de indicadores de somatización."},
+            "2 D": {"Area": "Clínica", "H": "Cuadro depresivo activo. Desánimo, desesperanza, apatía motora, insatisfacción vital y falta de energía.", "N": "Estabilidad del estado de ánimo. Motivación y energía vital preservadas."},
+            "3 Hy": {"Area": "Clínica", "H": "Mecanismos de negación severos. Fuerte necesidad de aprobación externa y posible desarrollo de síntomas físicos bajo presión.", "N": "Manejo emocional proporcionado. Adaptación sana a las tensiones interpersonales."},
+            "4 Pd": {"Area": "Clínica", "H": "Impulsividad, baja tolerancia a la frustración y dificultades marcadas para internalizar normas sociales.", "N": "Control de impulsos adecuado. Respeto por las normativas sociales y buena integración comunitaria."},
+            "6 Pa": {"Area": "Clínica", "H": "Rigidez cognitiva, suspicacia extrema e hipersensibilidad al rechazo. Tendencia a percibir el entorno como hostil.", "N": "Confianza interpersonal conservada. Flexibilidad cognitiva y ausencia de ideación paranoide."},
+            "7 Pt": {"Area": "Clínica", "H": "Ansiedad paralizante, perfeccionismo disfuncional, autocrítica severa y patrones rumiantes u obsesivos.", "N": "Niveles de preocupación normativos. Seguridad en sí mismo y ausencia de rituales obsesivos."},
+            "8 Sc": {"Area": "Clínica", "H": "Aislamiento social profundo, pensamiento desorganizado y distanciamiento de la realidad objetiva.", "N": "Juicio de realidad intacto. Procesos de pensamiento lógicos y secuenciales."},
+            "9 Ma": {"Area": "Clínica", "H": "Aceleración psicomotriz, irritabilidad y sobreestimación de capacidades. Dificultad para mantener la constancia.", "N": "Nivel de activación congruente con las demandas del entorno. Estabilidad conductual."},
+            "0 Si": {"Area": "Clínica", "H": "Evitación social marcada. Timidez paralizante y disconfort agudo en situaciones grupales desestructuradas.", "N": "Participación social adecuada. Capacidad para interactuar en grupos sin experimentar angustia."}
         }
 
     @staticmethod
-    def generar_diagnostico_narrativo(df_perfil):
-        """Redacta un ensayo clínico, estructurado y altamente profesional."""
+    def generar_diagnostico_narrativo(df_perfil, paciente):
+        """Redacta un ensayo clínico, estructurado, altamente profesional y PERSONALIZADO."""
+        # Extracción segura del nombre para personalizar el informe
+        nombre_evaluado = paciente.get('nombre', '').strip()
+        if not nombre_evaluado:
+            nombre_evaluado = "el/la evaluado(a)"
+        
         t_L = df_perfil[df_perfil['Escala'] == 'L (Mentira)']['T'].values[0]
         t_F = df_perfil[df_perfil['Escala'] == 'F (Incoherencia)']['T'].values[0]
         t_K = df_perfil[df_perfil['Escala'] == 'K (Defensividad)']['T'].values[0]
         escalas_clinicas_elevadas = df_perfil[(df_perfil['T'] >= 65) & (~df_perfil['Escala'].isin(["L (Mentira)", "F (Incoherencia)", "K (Defensividad)"]))]
         
-        # PÁRRAFO 1: VALIDEZ
-        validez_txt = "<b>ANÁLISIS ESTRUCTURAL DE LA VALIDEZ DEL PERFIL:</b><br>"
+        # PÁRRAFO 1: VALIDEZ (INCORPORANDO EL NOMBRE)
+        validez_txt = f"<b>ANÁLISIS ESTRUCTURAL DE LA VALIDEZ DEL PERFIL DE {nombre_evaluado.upper()}:</b><br>"
         if t_L >= 65 or t_K >= 65:
-            validez_txt += "El análisis de las escalas de validez revela una configuración caracterizada por una elevada defensividad y un esfuerzo activo por manipular la impresión clínica (elevaciones en L y/o K). El evaluado intentó proyectar una imagen de perfección normativa, negando sistemáticamente desajustes emocionales comunes. Aunque el perfil conserva su utilidad diagnóstica, el profesional debe inferir que los niveles reales de angustia o conflicto psicosocial podrían estar subestimados."
+            validez_txt += f"El análisis de las escalas de validez revela que {nombre_evaluado} presenta una configuración caracterizada por una elevada defensividad y un esfuerzo activo por manipular la impresión clínica (elevaciones en L y/o K). El paciente ha intentado proyectar una imagen de perfección normativa, negando sistemáticamente desajustes emocionales comunes. Aunque el perfil conserva su utilidad diagnóstica, el profesional debe inferir que los niveles reales de angustia de {nombre_evaluado} podrían estar subestimados."
         elif t_F >= 70:
-            validez_txt += "Se observa una elevación estadísticamente atípica en la escala de Incoherencia (F). Este patrón es indicativo de distress psicológico agudo, desorganización del pensamiento, o una tendencia consciente a exagerar la sintomatología (fenómeno de 'grito de ayuda'). Se recomienda encarecidamente la triangulación de estos datos mediante entrevista clínica profunda."
+            validez_txt += f"Se observa una elevación estadísticamente atípica en la escala de Incoherencia (F) para {nombre_evaluado}. Este patrón es indicativo de distress psicológico agudo, desorganización del pensamiento, o una tendencia consciente a exagerar la sintomatología. Se recomienda encarecidamente la triangulación de estos datos mediante entrevista clínica profunda."
         else:
-            validez_txt += "La evaluación de la actitud frente a la prueba indica que el individuo respondió con un nivel óptimo de franqueza, cooperación y coherencia lógica. No se detectan indicadores significativos de simulación, defensividad rígida o minimización de síntomas. El protocolo es altamente válido y refleja de manera fidedigna la estructura de personalidad del sujeto."
+            validez_txt += f"La evaluación de la actitud frente a la prueba indica que {nombre_evaluado} respondió con un nivel óptimo de franqueza, cooperación y coherencia lógica. No se detectan indicadores significativos de simulación, defensividad rígida o minimización de síntomas. El protocolo de {nombre_evaluado} es altamente válido y refleja de manera fidedigna su estructura de personalidad."
 
-        # PÁRRAFO 2: ESTADO CLÍNICO
+        # PÁRRAFO 2: ESTADO CLÍNICO (INCORPORANDO EL NOMBRE)
         clinico_txt = "<br><br><b>EVALUACIÓN DEL ESTADO CLÍNICO Y AJUSTE DE LA PERSONALIDAD:</b><br>"
         if escalas_clinicas_elevadas.empty:
-            clinico_txt += "El recorrido del perfil clínico no muestra elevaciones de rango patológico (todas las Puntuaciones T se sitúan por debajo del umbral de 65). Este hallazgo sugiere fuertemente un estado de homeostasis emocional y un nivel robusto de adaptación psicosocial. El individuo dispone de mecanismos de afrontamiento maduros y funcionales para procesar estresores normativos, evidenciando un funcionamiento conductual y afectivo estable."
+            clinico_txt += f"El recorrido del perfil clínico sugiere que {nombre_evaluado} no presenta elevaciones de rango patológico (todas las Puntuaciones T se sitúan por debajo del umbral de 65). Este hallazgo sugiere fuertemente un estado de homeostasis emocional y un nivel robusto de adaptación psicosocial. {nombre_evaluado} dispone de mecanismos de afrontamiento maduros y funcionales para procesar estresores normativos."
         else:
             nombres = ", ".join(escalas_clinicas_elevadas['Escala'].tolist())
-            clinico_txt += f"El análisis cuantitativo revela la presencia de picos de significancia clínica (T ≥ 65) en las dimensiones correspondientes a: <b>{nombres}</b>. Esta configuración denota la existencia de núcleos sintomáticos activos o rasgos de personalidad desadaptativos que están interfiriendo negativamente con la funcionalidad del evaluado. Las áreas comprometidas sugieren una disrupción en la capacidad de autorregulación emocional o en la adaptación a las exigencias del entorno socio-laboral."
+            clinico_txt += f"El análisis cuantitativo revela que {nombre_evaluado} presenta picos de significancia clínica (T ≥ 65) en las dimensiones correspondientes a: <b>{nombres}</b>. Esta configuración denota la existencia de núcleos sintomáticos activos o rasgos de personalidad desadaptativos que están interfiriendo negativamente con la funcionalidad del paciente. Las áreas comprometidas sugieren una disrupción en la capacidad de autorregulación emocional de {nombre_evaluado}."
 
-        # PÁRRAFO 3: CONCLUSIÓN Y PRONÓSTICO
+        # PÁRRAFO 3: CONCLUSIÓN Y PRONÓSTICO (INCORPORANDO EL NOMBRE)
         recomendacion_txt = "<br><br><b>IMPLICACIONES PRONÓSTICAS Y PLAN DE ACCIÓN:</b><br>"
         if '4 Pd' in escalas_clinicas_elevadas['Escala'].values or '6 Pa' in escalas_clinicas_elevadas['Escala'].values or '8 Sc' in escalas_clinicas_elevadas['Escala'].values or '9 Ma' in escalas_clinicas_elevadas['Escala'].values:
-            recomendacion_txt += "En virtud de la presencia de indicadores asociados a impulsividad severa, rigidez perceptiva o fallas en el control de la hostilidad, se prescribe derivación inmediata a un proceso psicoterapéutico focalizado. Resulta imperativo implementar estrategias de contención conductual y reestructuración cognitiva para mitigar riesgos de desajuste disciplinario o interpersonal."
+            recomendacion_txt += f"En virtud de la presencia de indicadores severos, se prescribe para {nombre_evaluado} derivación inmediata a un proceso psicoterapéutico focalizado. Resulta imperativo implementar estrategias de contención conductual y reestructuración cognitiva para mitigar riesgos de desajuste disciplinario o interpersonal."
         elif '1 Hs' in escalas_clinicas_elevadas['Escala'].values or '2 D' in escalas_clinicas_elevadas['Escala'].values or '7 Pt' in escalas_clinicas_elevadas['Escala'].values:
-            recomendacion_txt += "Dado el predominio de sintomatología internalizante (ansiedad, somatización o constricción afectiva depresiva), se recomienda abordaje terapéutico de corte Cognitivo-Conductual para flexibilizar la rumiación y fomentar la activación conductual. El pronóstico es clínicamente favorable si se establece adherencia al tratamiento."
+            recomendacion_txt += f"Dado el predominio de sintomatología internalizante, se recomienda que {nombre_evaluado} inicie un abordaje terapéutico de corte Cognitivo-Conductual para flexibilizar la rumiación y fomentar la activación conductual. El pronóstico es clínicamente favorable si se establece adherencia al tratamiento."
         else:
-            recomendacion_txt += "A la luz de la ausencia de elementos psicopatológicos estructurados, el pronóstico de ajuste es altamente favorable. Se sugiere promover el mantenimiento de la red de apoyo social primario del individuo y la continuidad de sus hábitos de higiene mental y autocuidado preventivo."
+            recomendacion_txt += f"A la luz de la ausencia de elementos psicopatológicos estructurados, el pronóstico de ajuste para {nombre_evaluado} es altamente favorable. Se sugiere promover el mantenimiento de su red de apoyo social primario y la continuidad de sus hábitos de higiene mental preventivos."
 
         return validez_txt + clinico_txt + recomendacion_txt
 
@@ -205,25 +210,17 @@ class MotorDiagnosticoIntegral:
 def crear_grafico_alta_resolucion(df, titulo):
     """Generador gráfico refinado para inclusión en expedientes periciales."""
     fig, ax = plt.subplots(figsize=(12, 6))
-    
-    # Franja gris de normalidad estadística
     ax.axhspan(40, 65, facecolor='#edf2f7', alpha=0.6, label='Banda Normativa (T=40-65)')
-    
     etiquetas = [esc.split(" ")[0] for esc in df["Escala"]]
-    
-    # Línea del perfil psicométrico
     ax.plot(etiquetas, df["T"], marker='o', markerfacecolor='#ffffff', markeredgewidth=2.5, 
             markeredgecolor='#112a46', color='#112a46', linewidth=3.5, markersize=10)
     
-    # Límites clínicos
     ax.axhline(65, color='#c1121f', linestyle='--', linewidth=2.5, label="Corte Clínico Patológico (T=65)")
     ax.axhline(50, color='#718096', linestyle=':', linewidth=1.5, label="Media Poblacional (T=50)")
     
     ax.set_ylim(30, 120)
     ax.set_ylabel("Puntuaciones Estándar (T)", fontweight='bold', color='#1a202c', fontsize=12)
     ax.set_title(titulo, fontweight='bold', fontsize=16, pad=20, color='#112a46')
-    
-    # Estilizado de la cuadrícula y bordes
     ax.grid(True, axis='y', linestyle='-', color='#cbd5e1', alpha=0.5)
     ax.legend(loc="upper right", framealpha=0.9, fontsize=10, shadow=True)
     ax.spines['top'].set_visible(False)
@@ -239,12 +236,10 @@ def crear_grafico_alta_resolucion(df, titulo):
     return img_buf
 
 # =====================================================================
-# 📄 6. GENERADOR DE MEGA INFORME WORD (EXPEDIENTE FORENSE)
+# 📄 6. GENERADOR DE MEGA INFORME WORD (EXPEDIENTE FORENSE COMPLETO)
 # =====================================================================
 def generar_expediente_word(p, df_resp, df_perfil):
     doc = Document()
-    
-    # Configuración de estilos globales
     style = doc.styles['Normal']
     style.font.name = 'Arial'
     style.font.size = Pt(11)
@@ -269,10 +264,10 @@ def generar_expediente_word(p, df_resp, df_perfil):
         tabla_id.rows[i].cells[0].text = f"{datos[i*2][0]}: {datos[i*2][1]}"
         tabla_id.rows[i].cells[1].text = f"{datos[i*2+1][0]}: {datos[i*2+1][1]}"
 
-    # --- 2. ANÁLISIS IA ---
+    # --- 2. ANÁLISIS IA (PERSONALIZADO) ---
     doc.add_page_break()
     doc.add_heading('2. DIAGNÓSTICO INTEGRAL Y PRONÓSTICO CLÍNICO', level=1)
-    texto_diagnostico = MotorDiagnosticoIntegral.generar_diagnostico_narrativo(df_perfil)
+    texto_diagnostico = MotorDiagnosticoIntegral.generar_diagnostico_narrativo(df_perfil, p) # AQUÍ PASAMOS LA 'p' PARA EL NOMBRE
     
     for parrafo in texto_diagnostico.split("<br><br>"):
         p_doc = doc.add_paragraph()
@@ -304,20 +299,20 @@ def generar_expediente_word(p, df_resp, df_perfil):
         doc.add_paragraph(r['Interpretacion']).alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
         doc.add_paragraph("-" * 60)
 
-    # --- 5. INDICADORES DE RIESGO (NUEVO) ---
+    # --- 5. INDICADORES DE RIESGO ---
     doc.add_heading('5. INDICADORES DE RIESGO E INTERVENCIÓN CRÍTICA', level=1)
     elevadas = df_perfil[df_perfil['T'] >= 65]
     if elevadas.empty:
-        doc.add_paragraph("No se detectan alertas críticas ni indicadores de riesgo psicopatológico severo en el presente protocolo que requieran intervención inmediata.")
+        doc.add_paragraph(f"No se detectan alertas críticas ni indicadores de riesgo psicopatológico severo para {p['nombre']} que requieran intervención inmediata.")
     else:
-        doc.add_paragraph("ATENCIÓN CLÍNICA REQUERIDA: Se advierten factores de riesgo en las siguientes áreas de la personalidad, debiéndose extremar las medidas de seguimiento psicológico:").bold = True
+        doc.add_paragraph(f"ATENCIÓN CLÍNICA REQUERIDA: Se advierten factores de riesgo en el perfil de {p['nombre']}, debiéndose extremar las medidas de seguimiento:").bold = True
         for e in elevadas['Escala']:
-            doc.add_paragraph(f"⚠️ Alerta actitudinal o emocional en la dimensión: {e}")
+            doc.add_paragraph(f"⚠️ Alerta clínica detectada en la dimensión: {e}")
 
     # --- 6. MATRIZ LEGAL DE RESPUESTAS ---
     doc.add_page_break()
-    doc.add_heading('6. ANEXO METODOLÓGICO: PROTOCOLO DE RESPUESTAS (567 ÍTEMS)', level=1)
-    doc.add_paragraph("La siguiente matriz representa las respuestas literales del evaluado, sirviendo como fundamento probatorio para la emisión del presente informe.")
+    doc.add_heading('6. ANEXO METODOLÓGICO: PROTOCOLO DE RESPUESTAS', level=1)
+    doc.add_paragraph("La matriz representa las respuestas (V=Verdadero, F=Falso) que sustentan metodológicamente los cálculos de este informe.")
     
     table = doc.add_table(rows=38, cols=15)
     table.style = 'Table Grid'
@@ -327,19 +322,28 @@ def generar_expediente_word(p, df_resp, df_perfil):
         for p_c in cell.paragraphs:
             for r_c in p_c.runs: r_c.font.size = Pt(7)
 
-    # --- FIRMAS ---
-    doc.add_paragraph("\n\n\n\n_________________________________________________________\nFirma y Sello Oficial del Profesional Evaluador").alignment = WD_ALIGN_PARAGRAPH.CENTER
-    doc.add_paragraph(f"{p['perito']}\nColegiatura / Registro de Salud").alignment = WD_ALIGN_PARAGRAPH.CENTER
+    # --- FIRMAS (EVALUADOR Y PACIENTE) ---
+    doc.add_paragraph("\n\n\n\n")
+    firma_table = doc.add_table(rows=2, cols=2)
+    firma_table.rows[0].cells[0].text = "_________________________________________________"
+    firma_table.rows[0].cells[1].text = "_________________________________________________"
+    firma_table.rows[0].cells[0].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+    firma_table.rows[0].cells[1].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+    
+    firma_table.rows[1].cells[0].text = f"Firma del Paciente / Evaluado\n{p['nombre']}\nDNI: {p['rut']}"
+    firma_table.rows[1].cells[1].text = f"Firma del Profesional Evaluador\n{p['perito']}\nRegistro Profesional Vigente"
+    firma_table.rows[1].cells[0].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+    firma_table.rows[1].cells[1].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
 
     output = io.BytesIO()
     doc.save(output)
     return output.getvalue()
 
 # =====================================================================
-# 🖥️ 7. INTERFAZ INTERACTIVA STREAMLIT (CON OMR EDITABLE)
+# 🖥️ 7. INTERFAZ INTERACTIVA STREAMLIT (CON OMR EDITABLE SELECTBOX)
 # =====================================================================
 with st.sidebar:
-    st.title("MMPI-2 PRO Edición 18")
+    st.title("MMPI-2 PRO Edición 19")
     modulo = st.radio("NAVEGACIÓN DEL SISTEMA:", [
         "👤 1. Expediente de Paciente", 
         "📝 2. Tabulación Manual",
@@ -348,7 +352,7 @@ with st.sidebar:
         "📄 5. Generar Informe Word"
     ])
     st.divider()
-    st.write(f"**Evaluado:** {st.session_state.paciente['nombre']}")
+    st.write(f"**Evaluado Activo:** {st.session_state.paciente['nombre']}")
 
 # --- CONFIGURACIÓN PARA HACER EL EDITOR VISUALMENTE FÁCIL (Desplegables) ---
 cfg_columna = {
@@ -360,12 +364,12 @@ cfg_columna = {
 # --- MÓDULO 1: DATOS ---
 if modulo == "👤 1. Expediente de Paciente":
     st.header("Apertura de Expediente Psicológico")
-    st.markdown("<div class='instruction-banner'>Complete todos los campos. Esta información será el encabezado legal de los reportes impresos.</div>", unsafe_allow_html=True)
+    st.markdown("<div class='instruction-banner'>Complete los campos. El Nombre ingresado personalizará automáticamente todo el análisis de Inteligencia Artificial y el reporte de Word.</div>", unsafe_allow_html=True)
     
     p = st.session_state.paciente
     col1, col2, col3 = st.columns(3)
     with col1:
-        p["nombre"] = st.text_input("Nombre Completo", p["nombre"])
+        p["nombre"] = st.text_input("Nombre Completo (Obligatorio para el reporte)", p["nombre"])
         p["edad"] = st.number_input("Edad Biológica", 18, 99, int(p["edad"]))
     with col2:
         p["rut"] = st.text_input("Identidad Oficial", p["rut"])
@@ -378,67 +382,66 @@ if modulo == "👤 1. Expediente de Paciente":
     p["perito"] = st.text_input("Psicólogo / Perito a Cargo", p["perito"])
     p["motivo"] = st.text_area("Motivo Central de la Evaluación", p["motivo"])
 
-# --- MÓDULO 2 Y 3: TABULACIÓN Y OMR UNIFICADO EN LÓGICA DE FUSIÓN (pd.concat) ---
+# --- MÓDULO 2 Y 3: TABULACIÓN Y OMR UNIFICADO (FUSIÓN DIRECTA EN MEMORIA) ---
 elif modulo == "📝 2. Tabulación Manual":
     st.header("Módulo de Tabulación Compacta")
-    st.markdown("<div class='instruction-banner'>Matriz rediseñada en 3 bloques paralelos. <b>Haga clic en la celda para desplegar las opciones V o F</b>. El guardado en la memoria central es automático e instantáneo.</div>", unsafe_allow_html=True)
+    st.markdown("<div class='instruction-banner'>Matriz rediseñada. <b>Haga clic en la celda para desplegar las opciones V o F</b>. El guardado en la memoria central es automático.</div>", unsafe_allow_html=True)
     
     c1, c2, c3 = st.columns(3)
     with c1:
-        st.markdown("<div class='block-title'>Bloque A (Ítems 1 al 189)</div>", unsafe_allow_html=True)
-        df1 = st.data_editor(st.session_state.data.iloc[0:189], hide_index=True, use_container_width=True, height=550, column_config=cfg_columna, key="man_1")
+        st.markdown("<div class='block-title'>Bloque A (1 al 189)</div>", unsafe_allow_html=True)
+        df1 = st.data_editor(st.session_state.data.iloc[0:189], hide_index=True, use_container_width=True, height=550, column_config=cfg_columna, key="m_1")
     with c2:
-        st.markdown("<div class='block-title'>Bloque B (Ítems 190 al 378)</div>", unsafe_allow_html=True)
-        df2 = st.data_editor(st.session_state.data.iloc[189:378], hide_index=True, use_container_width=True, height=550, column_config=cfg_columna, key="man_2")
+        st.markdown("<div class='block-title'>Bloque B (190 al 378)</div>", unsafe_allow_html=True)
+        df2 = st.data_editor(st.session_state.data.iloc[189:378], hide_index=True, use_container_width=True, height=550, column_config=cfg_columna, key="m_2")
     with c3:
-        st.markdown("<div class='block-title'>Bloque C (Ítems 379 al 567)</div>", unsafe_allow_html=True)
-        df3 = st.data_editor(st.session_state.data.iloc[378:567], hide_index=True, use_container_width=True, height=550, column_config=cfg_columna, key="man_3")
+        st.markdown("<div class='block-title'>Bloque C (379 al 567)</div>", unsafe_allow_html=True)
+        df3 = st.data_editor(st.session_state.data.iloc[378:567], hide_index=True, use_container_width=True, height=550, column_config=cfg_columna, key="m_3")
     
-    # [MAGIA TÉCNICA] Fusión en tiempo real. Lo que editas reemplaza a la base principal.
+    # Inyección directa a memoria principal
     st.session_state.data = pd.concat([df1, df2, df3], ignore_index=True)
 
 elif modulo == "📸 3. Escáner Óptico (OMR)":
     st.header("Escáner Inteligente con Verificación Humana")
-    st.markdown("Suba la imagen. Al finalizar el escaneo, aparecerá la matriz de resultados con menús desplegables para que pueda comparar y **corregir instantáneamente** cualquier error de lectura.")
+    st.markdown("Suba la imagen. Al finalizar, utilice los **menús desplegables de la tabla** para corregir rápidamente cualquier error de lectura óptica.")
     
-    up_f = st.file_uploader("Adjuntar fotografía (Formato JPG, PNG)", type=['jpg', 'png', 'jpeg'])
+    up_f = st.file_uploader("Adjuntar fotografía (JPG, PNG)", type=['jpg', 'png', 'jpeg'])
     
     if up_f:
-        st.image(up_f, use_container_width=True, caption="Imagen del protocolo recibida.")
+        st.image(up_f, use_container_width=True, caption="Protocolo listo para escaneo.")
         if st.button("🚀 INICIAR PROCESAMIENTO OMR"):
             barra = st.progress(0, text="Calibrando algoritmos de detección...")
             for pt in range(100):
                 time.sleep(0.015)
                 barra.progress(pt + 1, text=f"Extrayendo marcas del reactivo {int((pt/100)*567)}...")
             
-            # Simulación OMR
             for i in range(TOTAL_ITEMS): 
                 st.session_state.data.at[i, "Respuesta"] = "V" if np.random.rand() > 0.5 else "F"
             st.session_state.escaneo_listo = True
             st.rerun() 
             
     if st.session_state.get('escaneo_listo', False):
-        st.markdown("<div class='scan-alert'>✅ <b>ESCANEO FINALIZADO.</b> Haga clic en las respuestas de la tabla inferior para modificarlas utilizando el menú desplegable (V/F). Los cambios alterarán directamente la gráfica matemática.</div>", unsafe_allow_html=True)
+        st.markdown("<div class='scan-alert'>✅ <b>ESCANEO FINALIZADO.</b> Haga clic en las celdas inferiores para corregir con el menú (V/F). Los cambios impactarán los gráficos instantáneamente.</div>", unsafe_allow_html=True)
         
         c1, c2, c3 = st.columns(3)
         with c1:
-            st.markdown("<div class='block-title'>Edición Rápida 1-189</div>", unsafe_allow_html=True)
-            df_omr1 = st.data_editor(st.session_state.data.iloc[0:189], hide_index=True, use_container_width=True, height=500, column_config=cfg_columna, key="omr_1")
+            st.markdown("<div class='block-title'>Edición (1-189)</div>", unsafe_allow_html=True)
+            df_omr1 = st.data_editor(st.session_state.data.iloc[0:189], hide_index=True, use_container_width=True, height=500, column_config=cfg_columna, key="o_1")
         with c2:
-            st.markdown("<div class='block-title'>Edición Rápida 190-378</div>", unsafe_allow_html=True)
-            df_omr2 = st.data_editor(st.session_state.data.iloc[189:378], hide_index=True, use_container_width=True, height=500, column_config=cfg_columna, key="omr_2")
+            st.markdown("<div class='block-title'>Edición (190-378)</div>", unsafe_allow_html=True)
+            df_omr2 = st.data_editor(st.session_state.data.iloc[189:378], hide_index=True, use_container_width=True, height=500, column_config=cfg_columna, key="o_2")
         with c3:
-            st.markdown("<div class='block-title'>Edición Rápida 379-567</div>", unsafe_allow_html=True)
-            df_omr3 = st.data_editor(st.session_state.data.iloc[378:567], hide_index=True, use_container_width=True, height=500, column_config=cfg_columna, key="omr_3")
+            st.markdown("<div class='block-title'>Edición (379-567)</div>", unsafe_allow_html=True)
+            df_omr3 = st.data_editor(st.session_state.data.iloc[378:567], hide_index=True, use_container_width=True, height=500, column_config=cfg_columna, key="o_3")
         
-        # Inyección directa a la base de datos central
+        # Inyección directa a memoria principal
         st.session_state.data = pd.concat([df_omr1, df_omr2, df_omr3], ignore_index=True)
 
 # --- MÓDULO 4: DASHBOARD ANALÍTICO ---
 elif modulo == "📊 4. Dashboard Analítico":
-    st.header("Análisis Interpretativo y Resultados")
+    st.header(f"Análisis Interpretativo de {st.session_state.paciente['nombre']}")
     
-    # 1. CÁLCULO MATEMÁTICO (EXACTO EXCEL)
+    # 1. CÁLCULO MATEMÁTICO (VERACIDAD EXCEL)
     resp = dict(zip(st.session_state.data["Nº"], st.session_state.data["Respuesta"]))
     pd_final = {esc: sum(1 for i in c["V"] if resp.get(i)=="V") + sum(1 for i in c["F"] if resp.get(i)=="F") for esc, c in PLANTILLAS_CORRECCION.items()}
     
@@ -461,8 +464,9 @@ elif modulo == "📊 4. Dashboard Analítico":
     tab1, tab2, tab3 = st.tabs(["📝 Síntesis Clínica", "📈 Gráficas Oficiales", "⚙️ Matrices y Desglose"])
     
     with tab1:
-        texto_ia = MotorDiagnosticoIntegral.generar_diagnostico_narrativo(df_perfil)
-        st.markdown(f"<div class='diag-box'><div class='diag-title'>Análisis de la IA</div>{texto_ia}</div>", unsafe_allow_html=True)
+        # AQUI LA IA TOMA LA VARIABLE p PARA INYECTAR EL NOMBRE
+        texto_ia = MotorDiagnosticoIntegral.generar_diagnostico_narrativo(df_perfil, st.session_state.paciente)
+        st.markdown(f"<div class='diag-box'><div class='diag-title'>Análisis Diagnóstico Personalizado</div>{texto_ia}</div>", unsafe_allow_html=True)
         
     with tab2:
         st.image(crear_grafico_alta_resolucion(df_perfil.iloc[0:3], "Escalas de Validez"), use_container_width=True)
@@ -491,7 +495,7 @@ elif modulo == "📊 4. Dashboard Analítico":
 # --- MÓDULO 5: EXPORTACIÓN WORD ---
 elif modulo == "📄 5. Generar Informe Word":
     st.header("Impresión de Documentación Oficial")
-    st.markdown("<div class='instruction-banner'>El motor compilará y redactará un expediente Word (.docx) formal, insertando los gráficos en alta resolución y preservando la matriz legal de los datos calculados.</div>", unsafe_allow_html=True)
+    st.markdown("<div class='instruction-banner'>El motor integrará el nombre del paciente, el diagnóstico extenso, las gráficas y la matriz legal en un formato pericial estructurado con espacio para firmas.</div>", unsafe_allow_html=True)
     
     if st.button("🚀 GENERAR Y DESCARGAR EXPEDIENTE COMPLETO"):
         with st.spinner("Procesando lógicas matemáticas y redactando documento clínico..."):
@@ -507,8 +511,9 @@ elif modulo == "📄 5. Generar Informe Word":
             
             df_perfil = pd.DataFrame(perfil)
             
-            # Creación del documento
+            # Creación del documento en memoria (AQUÍ PASA LA VARIABLE DEL PACIENTE PARA LA IA)
             doc_bin = generar_expediente_word(st.session_state.paciente, st.session_state.data, df_perfil)
             
             st.success("✅ Documento de Peritaje generado con éxito.")
-            st.download_button("📥 DESCARGAR INFORME FORENSE (.DOCX)", doc_bin, file_name=f"PERITAJE_MMPI2_{st.session_state.paciente['nombre'].replace(' ', '_').upper()}.docx", mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+            nombre_archivo = st.session_state.paciente['nombre'].replace(' ', '_').upper() if st.session_state.paciente['nombre'] else "PACIENTE"
+            st.download_button("📥 DESCARGAR INFORME FORENSE (.DOCX)", doc_bin, file_name=f"PERITAJE_MMPI2_{nombre_archivo}.docx", mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
